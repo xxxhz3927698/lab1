@@ -22,15 +22,9 @@
 
 ## 公开仓库
 
-公开 Git 仓库地址尚未创建/填写。创建后执行：
+公开仓库地址：https://github.com/xxxhz3927698/lab1
 
-```bash
-git remote add origin <你的公开仓库URL>
-git push -u origin main
-git push origin lab1-ai-draft lab1-final
-```
-
-推送后把仓库地址填入 `report.pdf` 的版本信息。**只修改报告，不要移动两个 Git 标签。**
+已推送分支 `main` 和标签 `lab1-ai-draft`、`lab1-final`。**不要移动、删除或覆盖两个标签。**
 
 ## WSL 仓库
 
