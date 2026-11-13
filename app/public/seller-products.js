@@ -1,3 +1,4 @@
+(function () {
 'use strict';
 
 const $ = (selector) => document.querySelector(selector);
@@ -170,3 +171,5 @@ document.addEventListener('app:user-ready', (event) => {
   }
   loadProducts();
 });
+
+})();

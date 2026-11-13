@@ -1,3 +1,4 @@
+(function () {
 'use strict';
 
 const $ = (selector) => document.querySelector(selector);
@@ -88,3 +89,5 @@ for (const link of $$('a[data-soon]')) {
 
 $('#logoutButton').addEventListener('click', logout);
 loadSession();
+
+})();

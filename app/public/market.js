@@ -1,3 +1,4 @@
+(function () {
 'use strict';
 
 const $ = (selector) => document.querySelector(selector);
@@ -137,3 +138,5 @@ $('#nextPage').addEventListener('click', () => {
 });
 
 loadCategories().then(loadProducts);
+
+})();

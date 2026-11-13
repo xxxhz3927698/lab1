@@ -1,3 +1,4 @@
+(function () {
 'use strict';
 
 const $ = (selector) => document.querySelector(selector);
@@ -173,3 +174,5 @@ async function load() {
 }
 
 load();
+
+})();

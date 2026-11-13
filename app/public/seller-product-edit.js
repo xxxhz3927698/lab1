@@ -1,3 +1,4 @@
+(function () {
 'use strict';
 
 const $ = (selector) => document.querySelector(selector);
@@ -193,3 +194,5 @@ $('#saveButton').addEventListener('click', () => save(false));
 $('#saveSubmitButton').addEventListener('click', () => save(true));
 document.addEventListener('app:user-ready', (event) => init(event.detail));
 if (window.currentUser) init(window.currentUser);
+
+})();

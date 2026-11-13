@@ -1,3 +1,4 @@
+(function () {
 'use strict';
 
 const $ = (selector) => document.querySelector(selector);
@@ -195,3 +196,5 @@ function init(user) {
 }
 document.addEventListener('app:user-ready', (event) => init(event.detail));
 if (window.currentUser) init(window.currentUser);
+
+})();
