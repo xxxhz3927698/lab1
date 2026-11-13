@@ -114,15 +114,24 @@ router.get('/products/:id', (req, res) => {
     return res.status(404).json({ error: '商品不存在或不可见' });
   }
 
+  const activeReservation = req.user && req.user.role === 'BUYER'
+    ? db.prepare(`
+        SELECT id FROM reservations
+        WHERE product_id = ? AND buyer_id = ? AND status IN ('PENDING', 'CONFIRMED')
+        LIMIT 1
+      `).get(id, req.user.id)
+    : null;
   const canReserve = Boolean(
     req.user
     && req.user.role === 'BUYER'
     && row.status === 'ON_SALE'
-    && Number(row.seller_id) !== req.user.id,
+    && Number(row.seller_id) !== req.user.id
+    && !activeReservation,
   );
   res.json({
     product: mapProduct(row, { includePrivate: isOwner || isAdmin }),
     canReserve,
+    activeReservationId: activeReservation ? Number(activeReservation.id) : null,
     viewer: req.user ? { id: req.user.id, role: req.user.role } : null,
   });
 });

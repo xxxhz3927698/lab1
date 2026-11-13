@@ -59,6 +59,9 @@ function actions(product) {
   if (product.status === 'ON_SALE') {
     parts.push(`<button class="btn btn-danger btn-sm" data-action="delist" data-id="${product.id}" data-version="${product.version}">下架</button>`);
   }
+  if (product.pendingReservations > 0 || product.status === 'RESERVED') {
+    parts.push(`<a class="btn btn-ghost btn-sm" href="/seller/reservations.html?productId=${product.id}">处理预约</a>`);
+  }
   parts.push(`<a class="btn btn-ghost btn-sm" href="/product.html?id=${product.id}">详情</a>`);
   return `<div class="actions">${parts.join('')}</div>`;
 }

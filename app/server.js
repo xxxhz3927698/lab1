@@ -7,7 +7,14 @@ const { attachUser } = require('./auth');
 const authRoutes = require('./routes/auth');
 const catalogRoutes = require('./routes/catalog');
 const sellerProductRoutes = require('./routes/sellerProducts');
+const sellerReservationRoutes = require('./routes/sellerReservations');
+const reservationRoutes = require('./routes/reservations');
 const adminReviewRoutes = require('./routes/adminReview');
+const adminUsersRoutes = require('./routes/adminUsers');
+const adminLogsRoutes = require('./routes/adminLogs');
+const adminProductsRoutes = require('./routes/adminProducts');
+const statsRoutes = require('./routes/stats');
+const { expireReservations } = require('./reservationUtils');
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
@@ -32,8 +39,14 @@ app.get('/api/health', (_req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api', catalogRoutes);
+app.use('/api/reservations', reservationRoutes);
 app.use('/api/seller', sellerProductRoutes);
+app.use('/api/seller/reservations', sellerReservationRoutes);
 app.use('/api/admin', adminReviewRoutes);
+app.use('/api/admin', adminUsersRoutes);
+app.use('/api/admin', adminLogsRoutes);
+app.use('/api/admin', adminProductsRoutes);
+app.use('/api/stats', statsRoutes);
 
 app.use(express.static(path.join(__dirname, 'public'), {
   extensions: ['html'],
@@ -56,6 +69,19 @@ app.use((error, _req, res, _next) => {
 });
 
 if (require.main === module) {
+  try {
+    expireReservations();
+  } catch (error) {
+    console.error('启动时处理过期预约失败', error);
+  }
+  const timer = setInterval(() => {
+    try {
+      expireReservations();
+    } catch (error) {
+      console.error('定时处理过期预约失败', error);
+    }
+  }, 60 * 1000);
+  timer.unref?.();
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`二手交易平台原型已启动：http://localhost:${PORT}`);
     console.log('登录页：http://localhost:' + PORT + '/login.html');

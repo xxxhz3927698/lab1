@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>用户管理 · 校园二手</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand-mark"><span class="brand-logo">循</span><span>校园二手</span></div>
+      <div class="nav-label">工作台</div>
+      <nav class="nav">
+        <a class="nav-item" href="/"><span class="nav-icon">⌂</span>总览</a>
+        <a class="nav-item" href="/market.html" data-role="BUYER SELLER ADMIN"><span class="nav-icon">⌕</span>商品市场</a>
+        <a class="nav-item" href="/reservations.html" data-role="BUYER"><span class="nav-icon">◷</span>我的预约</a>
+      </nav>
+      <div class="nav-label">卖家中心</div>
+      <nav class="nav">
+        <a class="nav-item" href="/seller/products.html" data-role="SELLER"><span class="nav-icon">▤</span>商品管理</a>
+        <a class="nav-item" href="/seller/reservations.html" data-role="SELLER"><span class="nav-icon">⇄</span>预约处理</a>
+      </nav>
+      <div class="nav-label">平台管理</div>
+      <nav class="nav">
+        <a class="nav-item" href="/admin/review.html" data-role="ADMIN"><span class="nav-icon">✓</span>审核与违规</a>
+        <a class="nav-item" href="/admin/violations.html" data-role="ADMIN"><span class="nav-icon">!</span>违规处理</a>
+        <a class="nav-item active" href="/admin/users.html" data-role="ADMIN"><span class="nav-icon">♙</span>用户管理</a>
+        <a class="nav-item" href="/admin/logs.html" data-role="ADMIN"><span class="nav-icon">≡</span>操作日志</a>
+        <a class="nav-item" href="/stats.html" data-role="SELLER ADMIN"><span class="nav-icon">◫</span>统计看板</a>
+      </nav>
+      <div class="sidebar-foot"><small>课程项目原型 · v0.4</small><br><small>线下交易 · 不做在线支付</small></div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <div class="topbar-title">平台管理 / 用户管理</div>
+        <div class="topbar-actions">
+          <div class="user-pill"><span class="avatar" id="avatar">?</span><span class="user-meta"><strong id="displayName">加载中</strong><span id="roleLabel">—</span></span></div>
+          <button class="btn btn-ghost btn-sm" id="logoutButton" type="button">退出登录</button>
+        </div>
+      </header>
+
+      <main class="content">
+        <section class="page-head">
+          <div>
+            <h1>用户管理</h1>
+            <p>查看买家、卖家和管理员账号，禁用后现有会话立即失效。禁用用户不会自动改变已有商品和预约状态。</p>
+          </div>
+          <span class="badge badge-blue" id="userCount">—</span>
+        </section>
+
+        <form class="card filter-card" id="filterForm">
+          <div class="filter-grid" style="grid-template-columns: 2fr 1fr 1fr auto">
+            <div class="field"><label for="q">关键词</label><input id="q" placeholder="账号或昵称"></div>
+            <div class="field"><label for="role">角色</label>
+              <select id="role"><option value="">全部角色</option><option value="BUYER">买家</option><option value="SELLER">卖家</option><option value="ADMIN">管理员</option></select>
+            </div>
+            <div class="field"><label for="status">状态</label>
+              <select id="status"><option value="">全部状态</option><option value="ACTIVE">正常</option><option value="DISABLED">已禁用</option></select>
+            </div>
+            <button class="btn btn-primary" type="submit">筛选</button>
+          </div>
+        </form>
+
+        <div class="alert alert-error" id="listAlert"></div>
+        <section class="card">
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>账号</th><th>昵称</th><th>角色</th><th>状态</th><th>商品数</th><th>注册时间</th><th>操作</th></tr></thead>
+              <tbody id="userRows"><tr><td colspan="7"><div class="empty">正在加载…</div></td></tr></tbody>
+            </table>
+          </div>
+          <div class="pager" style="padding:14px 18px">
+            <span id="pageInfo">—</span>
+            <div class="pager-actions">
+              <button class="btn btn-ghost btn-sm" id="prevPage" type="button">上一页</button>
+              <button class="btn btn-ghost btn-sm" id="nextPage" type="button">下一页</button>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script src="/app.js"></script>
+  <script src="/admin-users.js"></script>
+</body>
+</html>

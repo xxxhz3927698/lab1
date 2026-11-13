@@ -28,14 +28,17 @@ function showError(message) {
   box.className = message ? 'alert show alert-error' : 'alert';
 }
 
-async function api(path) {
-  const response = await fetch(path);
+async function api(path, options = {}) {
+  const response = await fetch(path, {
+    headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
+    ...options,
+  });
   const data = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(data.error || '请求失败');
   return data;
 }
 
-function render(product, canReserve, viewer) {
+function render(product, canReserve, viewer, activeReservationId) {
   const status = STATUS[product.status] || [product.status, 'badge-gray'];
   $('#productTitle').textContent = product.title;
   $('#productSubtitle').textContent = `${product.category.name} · ${CONDITION[product.condition] || product.condition} · 卖家 ${product.seller.displayName}`;
@@ -51,9 +54,15 @@ function render(product, canReserve, viewer) {
   let action = '';
   if (canReserve) {
     action = `
+      <div class="field" style="margin-top:14px">
+        <label for="reserveMessage">预约留言（选填，最多 200 字）</label>
+        <textarea id="reserveMessage" rows="3" maxlength="200" placeholder="例如：希望今天下午在图书馆门口交易"></textarea>
+      </div>
       <button class="btn btn-primary btn-block" type="button" id="reserveButton">发起预约</button>
-      <div class="notice blue" style="margin-top:10px">预约功能将在下一步接入。当前阶段只完成商品与审核流程。</div>
+      <div class="notice blue" style="margin-top:10px">预约后商品仍保持在售；卖家确认后商品才变为已预订。预约不代表付款。</div>
     `;
+  } else if (activeReservationId) {
+    action = `<div class="notice blue">你已经有一条进行中的预约。<a class="text-link" href="/reservations.html">查看我的预约</a></div>`;
   } else if (product.status === 'ON_SALE') {
     action = '<div class="notice">当前账号不能对该商品发起预约。买家只能预约非本人发布的在售商品。</div>';
   } else if (product.status === 'RESERVED') {
@@ -119,8 +128,23 @@ function render(product, canReserve, viewer) {
   `;
   const reserveButton = document.querySelector('#reserveButton');
   if (reserveButton) {
-    reserveButton.addEventListener('click', () => {
-      toast('预约功能将在下一步接入', true);
+    reserveButton.addEventListener('click', async () => {
+      const message = document.querySelector('#reserveMessage')?.value.trim() || '';
+      const clientRequestId = (crypto.randomUUID && crypto.randomUUID()) || `req-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+      reserveButton.disabled = true;
+      reserveButton.textContent = '提交中…';
+      try {
+        await api('/api/reservations', {
+          method: 'POST',
+          body: JSON.stringify({ productId: product.id, message, clientRequestId }),
+        });
+        toast('预约已提交，等待卖家确认');
+        setTimeout(() => { location.href = '/reservations.html'; }, 700);
+      } catch (error) {
+        toast(error.message, true);
+        reserveButton.disabled = false;
+        reserveButton.textContent = '发起预约';
+      }
     });
   }
 }
@@ -141,7 +165,7 @@ async function load() {
   }
   try {
     const data = await api(`/api/products/${id}`);
-    render(data.product, data.canReserve, data.viewer);
+    render(data.product, data.canReserve, data.viewer, data.activeReservationId);
   } catch (error) {
     showError(error.message);
     $('#detailRoot').innerHTML = '<div class="card empty"><strong>商品不可见</strong><span>商品可能不存在、已下架或已违规移除。</span></div>';

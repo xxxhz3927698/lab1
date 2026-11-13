@@ -18,25 +18,26 @@
       <nav class="nav">
         <a class="nav-item active" href="/"><span class="nav-icon">⌂</span>总览</a>
         <a class="nav-item" href="/market.html" data-role="BUYER SELLER ADMIN"><span class="nav-icon">⌕</span>商品市场</a>
-        <a class="nav-item" href="/reservations.html" data-role="BUYER" data-soon><span class="nav-icon">◷</span>我的预约</a>
+        <a class="nav-item" href="/reservations.html" data-role="BUYER"><span class="nav-icon">◷</span>我的预约</a>
       </nav>
 
       <div class="nav-label">卖家中心</div>
       <nav class="nav">
         <a class="nav-item" href="/seller/products.html" data-role="SELLER"><span class="nav-icon">▤</span>商品管理</a>
-        <a class="nav-item" href="/seller/reservations.html" data-role="SELLER" data-soon><span class="nav-icon">⇄</span>预约处理</a>
+        <a class="nav-item" href="/seller/reservations.html" data-role="SELLER"><span class="nav-icon">⇄</span>预约处理</a>
       </nav>
 
       <div class="nav-label">平台管理</div>
       <nav class="nav">
         <a class="nav-item" href="/admin/review.html" data-role="ADMIN"><span class="nav-icon">✓</span>审核与违规</a>
-        <a class="nav-item" href="/admin/users.html" data-role="ADMIN" data-soon><span class="nav-icon">♙</span>用户管理</a>
-        <a class="nav-item" href="/admin/logs.html" data-role="ADMIN" data-soon><span class="nav-icon">≡</span>操作日志</a>
-        <a class="nav-item" href="/stats.html" data-role="SELLER ADMIN" data-soon><span class="nav-icon">◫</span>统计看板</a>
+        <a class="nav-item" href="/admin/violations.html" data-role="ADMIN"><span class="nav-icon">!</span>违规处理</a>
+        <a class="nav-item" href="/admin/users.html" data-role="ADMIN"><span class="nav-icon">♙</span>用户管理</a>
+        <a class="nav-item" href="/admin/logs.html" data-role="ADMIN"><span class="nav-icon">≡</span>操作日志</a>
+        <a class="nav-item" href="/stats.html" data-role="SELLER ADMIN"><span class="nav-icon">◫</span>统计看板</a>
       </nav>
 
       <div class="sidebar-foot">
-        <small>课程项目原型 · v0.2</small><br>
+        <small>课程项目原型 · v0.4</small><br>
         <small>线下交易 · 不做在线支付</small>
       </div>
     </aside>
@@ -83,8 +84,8 @@
           </article>
           <article class="stat-card">
             <div class="label">当前阶段</div>
-            <div class="value">STEP 2</div>
-            <div class="sub">账号权限 + 商品审核</div>
+            <div class="value">STEP 3</div>
+            <div class="sub">账号 + 商品 + 预约交易</div>
           </article>
         </section>
 
@@ -106,7 +107,7 @@
               <div class="module-icon">◷</div>
               <h3>我的预约</h3>
               <p>查看待确认、已确认、已完成和已取消的预约，取消自己的预约。</p>
-              <div class="module-foot"><span class="badge badge-blue">买家</span><span class="badge badge-gray">待接入</span></div>
+              <div class="module-foot"><span class="badge badge-blue">买家</span><a class="btn btn-ghost btn-sm" href="/reservations.html">查看预约</a></div>
             </article>
             <article class="module-card" data-role="SELLER">
               <div class="module-icon">▤</div>
@@ -118,7 +119,7 @@
               <div class="module-icon">⇄</div>
               <h3>预约处理</h3>
               <p>查看自己商品的购买意向，确认一条预约，其他待确认预约自动拒绝。</p>
-              <div class="module-foot"><span class="badge badge-amber">卖家</span><span class="badge badge-gray">待接入</span></div>
+              <div class="module-foot"><span class="badge badge-amber">卖家</span><a class="btn btn-ghost btn-sm" href="/seller/reservations.html">处理预约</a></div>
             </article>
             <article class="module-card" data-role="ADMIN">
               <div class="module-icon">✓</div>
@@ -130,7 +131,7 @@
               <div class="module-icon">≡</div>
               <h3>日志与统计</h3>
               <p>查询关键操作日志，查看平台商品状态分布和每日交易数据。</p>
-              <div class="module-foot"><span class="badge badge-red">管理员</span><span class="badge badge-gray">待接入</span></div>
+              <div class="module-foot"><span class="badge badge-red">管理员</span><a class="btn btn-ghost btn-sm" href="/admin/logs.html">查看日志</a></div>
             </article>
           </div>
         </section>
@@ -143,8 +144,8 @@
             </div>
           </div>
           <div class="demo-note" style="margin:0">
-            第二步已经完成：商品草稿、编辑、提交审核、管理员通过/驳回、商品查询与详情、卖家商品管理和旧页面版本冲突处理。
-            下一阶段将实现买家预约、卖家确认、取消、完成和并发确认测试。
+            第四步已经完成：违规移除、用户禁用/启用、操作日志查询、卖家统计和平台统计。
+            主流程已可运行；下一步进行页面细节修正、真实数据演示和实验二设计材料整理。
           </div>
         </section>
       </main>

@@ -14,6 +14,7 @@ const {
   mapProduct,
 } = require('../productUtils');
 const { text } = require('../validation');
+const { cancelPendingReservationsForProduct } = require('../reservationUtils');
 
 const router = express.Router();
 router.use(requireRole('SELLER'));
@@ -171,6 +172,16 @@ router.put('/products/:id', (req, res, next) => {
         version,
       );
       if (Number(info.changes) !== 1) return null;
+      if (nextStatus === 'PENDING_REVIEW') {
+        cancelPendingReservationsForProduct(
+          id,
+          '商品修改后重新审核',
+          req.user.id,
+          req.user.role,
+          requestId(req),
+          clientIp(req),
+        );
+      }
       writeLog({
         actorId: req.user.id,
         actorRole: req.user.role,
@@ -262,6 +273,14 @@ router.post('/products/:id/delist', (req, res, next) => {
         WHERE id = ? AND seller_id = ? AND version = ?
       `).run(nowIso(), id, req.user.id, version);
       if (Number(info.changes) !== 1) return null;
+      cancelPendingReservationsForProduct(
+        id,
+        '卖家下架商品',
+        req.user.id,
+        req.user.role,
+        requestId(req),
+        clientIp(req),
+      );
       writeLog({
         actorId: req.user.id,
         actorRole: req.user.role,
