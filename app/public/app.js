@@ -35,16 +35,23 @@ function applyRoleVisibility(user) {
   }
 }
 
+function setText(selector, text) {
+  const element = $(selector);
+  if (element) element.textContent = text;
+}
+
 function renderUser(user) {
   currentUser = user;
+  window.currentUser = user;
   const role = ROLE_LABELS[user.role] || user.role;
-  $('#displayName').textContent = user.displayName;
-  $('#roleLabel').textContent = role;
-  $('#avatar').textContent = (user.displayName || user.account || '?').slice(0, 1).toUpperCase();
-  $('#welcome').textContent = `欢迎回来，${user.displayName}`;
-  $('#statRole').textContent = role;
-  $('#statStatus').textContent = user.status === 'ACTIVE' ? '正常' : '已禁用';
+  setText('#displayName', user.displayName);
+  setText('#roleLabel', role);
+  setText('#avatar', (user.displayName || user.account || '?').slice(0, 1).toUpperCase());
+  setText('#welcome', `欢迎回来，${user.displayName}`);
+  setText('#statRole', role);
+  setText('#statStatus', user.status === 'ACTIVE' ? '正常' : '已禁用');
   applyRoleVisibility(user);
+  document.dispatchEvent(new CustomEvent('app:user-ready', { detail: user }));
 }
 
 async function loadSession() {

@@ -17,19 +17,19 @@
       <div class="nav-label">工作台</div>
       <nav class="nav">
         <a class="nav-item active" href="/"><span class="nav-icon">⌂</span>总览</a>
-        <a class="nav-item" href="/market.html" data-role="BUYER SELLER ADMIN" data-soon><span class="nav-icon">⌕</span>商品市场</a>
+        <a class="nav-item" href="/market.html" data-role="BUYER SELLER ADMIN"><span class="nav-icon">⌕</span>商品市场</a>
         <a class="nav-item" href="/reservations.html" data-role="BUYER" data-soon><span class="nav-icon">◷</span>我的预约</a>
       </nav>
 
       <div class="nav-label">卖家中心</div>
       <nav class="nav">
-        <a class="nav-item" href="/seller/products.html" data-role="SELLER" data-soon><span class="nav-icon">▤</span>商品管理</a>
+        <a class="nav-item" href="/seller/products.html" data-role="SELLER"><span class="nav-icon">▤</span>商品管理</a>
         <a class="nav-item" href="/seller/reservations.html" data-role="SELLER" data-soon><span class="nav-icon">⇄</span>预约处理</a>
       </nav>
 
       <div class="nav-label">平台管理</div>
       <nav class="nav">
-        <a class="nav-item" href="/admin/review.html" data-role="ADMIN" data-soon><span class="nav-icon">✓</span>审核与违规</a>
+        <a class="nav-item" href="/admin/review.html" data-role="ADMIN"><span class="nav-icon">✓</span>审核与违规</a>
         <a class="nav-item" href="/admin/users.html" data-role="ADMIN" data-soon><span class="nav-icon">♙</span>用户管理</a>
         <a class="nav-item" href="/admin/logs.html" data-role="ADMIN" data-soon><span class="nav-icon">≡</span>操作日志</a>
         <a class="nav-item" href="/stats.html" data-role="SELLER ADMIN" data-soon><span class="nav-icon">◫</span>统计看板</a>
@@ -83,8 +83,8 @@
           </article>
           <article class="stat-card">
             <div class="label">当前阶段</div>
-            <div class="value">STEP 1</div>
-            <div class="sub">账号、角色、数据库基础</div>
+            <div class="value">STEP 2</div>
+            <div class="sub">账号权限 + 商品审核</div>
           </article>
         </section>
 
@@ -100,7 +100,7 @@
               <div class="module-icon">⌕</div>
               <h3>商品市场</h3>
               <p>按关键词、分类、价格和状态查找商品，查看详情并表达购买意向。</p>
-              <div class="module-foot"><span class="badge badge-blue">买家</span><span class="badge badge-gray">待接入</span></div>
+              <div class="module-foot"><span class="badge badge-blue">买家</span><a class="btn btn-ghost btn-sm" href="/market.html">进入市场</a></div>
             </article>
             <article class="module-card" data-role="BUYER">
               <div class="module-icon">◷</div>
@@ -112,7 +112,7 @@
               <div class="module-icon">▤</div>
               <h3>商品管理</h3>
               <p>保存草稿、提交审核、查看状态、下架商品并处理驳回原因。</p>
-              <div class="module-foot"><span class="badge badge-amber">卖家</span><span class="badge badge-gray">待接入</span></div>
+              <div class="module-foot"><span class="badge badge-amber">卖家</span><a class="btn btn-ghost btn-sm" href="/seller/products.html">管理商品</a></div>
             </article>
             <article class="module-card" data-role="SELLER">
               <div class="module-icon">⇄</div>
@@ -124,7 +124,7 @@
               <div class="module-icon">✓</div>
               <h3>审核与违规</h3>
               <p>审核商品、填写驳回理由、移除违规商品并联动取消相关预约。</p>
-              <div class="module-foot"><span class="badge badge-red">管理员</span><span class="badge badge-gray">待接入</span></div>
+              <div class="module-foot"><span class="badge badge-red">管理员</span><a class="btn btn-ghost btn-sm" href="/admin/review.html">进入审核</a></div>
             </article>
             <article class="module-card" data-role="ADMIN">
               <div class="module-icon">≡</div>
@@ -143,8 +143,8 @@
             </div>
           </div>
           <div class="demo-note" style="margin:0">
-            第一步已经完成：SQLite 数据库、用户表、会话表、分类表、商品/预约/审核/日志基础表、注册、登录、退出、RBAC 权限中间件、登录失败锁定和基础审计日志。
-            下一阶段将实现商品草稿、提交审核、管理员审核和商品查询。
+            第二步已经完成：商品草稿、编辑、提交审核、管理员通过/驳回、商品查询与详情、卖家商品管理和旧页面版本冲突处理。
+            下一阶段将实现买家预约、卖家确认、取消、完成和并发确认测试。
           </div>
         </section>
       </main>

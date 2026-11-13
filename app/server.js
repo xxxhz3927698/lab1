@@ -5,6 +5,9 @@ const express = require('express');
 const { db } = require('./db');
 const { attachUser } = require('./auth');
 const authRoutes = require('./routes/auth');
+const catalogRoutes = require('./routes/catalog');
+const sellerProductRoutes = require('./routes/sellerProducts');
+const adminReviewRoutes = require('./routes/adminReview');
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
@@ -28,6 +31,9 @@ app.get('/api/health', (_req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
+app.use('/api', catalogRoutes);
+app.use('/api/seller', sellerProductRoutes);
+app.use('/api/admin', adminReviewRoutes);
 
 app.use(express.static(path.join(__dirname, 'public'), {
   extensions: ['html'],
