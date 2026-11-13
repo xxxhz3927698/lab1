@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>工作台 · 校园二手</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand-mark">
+        <span class="brand-logo">循</span>
+        <span>校园二手</span>
+      </div>
+
+      <div class="nav-label">工作台</div>
+      <nav class="nav">
+        <a class="nav-item active" href="/"><span class="nav-icon">⌂</span>总览</a>
+        <a class="nav-item" href="/market.html" data-role="BUYER SELLER ADMIN" data-soon><span class="nav-icon">⌕</span>商品市场</a>
+        <a class="nav-item" href="/reservations.html" data-role="BUYER" data-soon><span class="nav-icon">◷</span>我的预约</a>
+      </nav>
+
+      <div class="nav-label">卖家中心</div>
+      <nav class="nav">
+        <a class="nav-item" href="/seller/products.html" data-role="SELLER" data-soon><span class="nav-icon">▤</span>商品管理</a>
+        <a class="nav-item" href="/seller/reservations.html" data-role="SELLER" data-soon><span class="nav-icon">⇄</span>预约处理</a>
+      </nav>
+
+      <div class="nav-label">平台管理</div>
+      <nav class="nav">
+        <a class="nav-item" href="/admin/review.html" data-role="ADMIN" data-soon><span class="nav-icon">✓</span>审核与违规</a>
+        <a class="nav-item" href="/admin/users.html" data-role="ADMIN" data-soon><span class="nav-icon">♙</span>用户管理</a>
+        <a class="nav-item" href="/admin/logs.html" data-role="ADMIN" data-soon><span class="nav-icon">≡</span>操作日志</a>
+        <a class="nav-item" href="/stats.html" data-role="SELLER ADMIN" data-soon><span class="nav-icon">◫</span>统计看板</a>
+      </nav>
+
+      <div class="sidebar-foot">
+        <small>课程项目原型 · v0.2</small><br>
+        <small>线下交易 · 不做在线支付</small>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <div class="topbar-title">工作台 / 总览</div>
+        <div class="topbar-actions">
+          <div class="user-pill">
+            <span class="avatar" id="avatar">?</span>
+            <span class="user-meta">
+              <strong id="displayName">加载中</strong>
+              <span id="roleLabel">—</span>
+            </span>
+          </div>
+          <button class="btn btn-ghost btn-sm" id="logoutButton" type="button">退出登录</button>
+        </div>
+      </header>
+
+      <main class="content">
+        <section class="page-head">
+          <div>
+            <h1 id="welcome">欢迎回来</h1>
+            <p>这里是你当前的交易工作台。基础账号与权限已经接通，业务模块将按步骤逐步开放。</p>
+          </div>
+          <span class="badge badge-green" id="sessionBadge">会话有效</span>
+        </section>
+
+        <section class="stat-grid">
+          <article class="stat-card">
+            <div class="label">账号角色</div>
+            <div class="value" id="statRole">—</div>
+            <div class="sub">由注册时确定，不可自行修改</div>
+          </article>
+          <article class="stat-card">
+            <div class="label">账号状态</div>
+            <div class="value accent" id="statStatus">—</div>
+            <div class="sub">禁用后会话立即失效</div>
+          </article>
+          <article class="stat-card">
+            <div class="label">会话有效期</div>
+            <div class="value">2h</div>
+            <div class="sub">HttpOnly Cookie · SameSite=Lax</div>
+          </article>
+          <article class="stat-card">
+            <div class="label">当前阶段</div>
+            <div class="value">STEP 1</div>
+            <div class="sub">账号、角色、数据库基础</div>
+          </article>
+        </section>
+
+        <section class="card card-pad" style="margin-bottom:18px">
+          <div class="card-head">
+            <div>
+              <h2>快捷入口</h2>
+              <p>不同角色只看到自己可以使用的模块。</p>
+            </div>
+          </div>
+          <div class="module-grid">
+            <article class="module-card" data-role="BUYER">
+              <div class="module-icon">⌕</div>
+              <h3>商品市场</h3>
+              <p>按关键词、分类、价格和状态查找商品，查看详情并表达购买意向。</p>
+              <div class="module-foot"><span class="badge badge-blue">买家</span><span class="badge badge-gray">待接入</span></div>
+            </article>
+            <article class="module-card" data-role="BUYER">
+              <div class="module-icon">◷</div>
+              <h3>我的预约</h3>
+              <p>查看待确认、已确认、已完成和已取消的预约，取消自己的预约。</p>
+              <div class="module-foot"><span class="badge badge-blue">买家</span><span class="badge badge-gray">待接入</span></div>
+            </article>
+            <article class="module-card" data-role="SELLER">
+              <div class="module-icon">▤</div>
+              <h3>商品管理</h3>
+              <p>保存草稿、提交审核、查看状态、下架商品并处理驳回原因。</p>
+              <div class="module-foot"><span class="badge badge-amber">卖家</span><span class="badge badge-gray">待接入</span></div>
+            </article>
+            <article class="module-card" data-role="SELLER">
+              <div class="module-icon">⇄</div>
+              <h3>预约处理</h3>
+              <p>查看自己商品的购买意向，确认一条预约，其他待确认预约自动拒绝。</p>
+              <div class="module-foot"><span class="badge badge-amber">卖家</span><span class="badge badge-gray">待接入</span></div>
+            </article>
+            <article class="module-card" data-role="ADMIN">
+              <div class="module-icon">✓</div>
+              <h3>审核与违规</h3>
+              <p>审核商品、填写驳回理由、移除违规商品并联动取消相关预约。</p>
+              <div class="module-foot"><span class="badge badge-red">管理员</span><span class="badge badge-gray">待接入</span></div>
+            </article>
+            <article class="module-card" data-role="ADMIN">
+              <div class="module-icon">≡</div>
+              <h3>日志与统计</h3>
+              <p>查询关键操作日志，查看平台商品状态分布和每日交易数据。</p>
+              <div class="module-foot"><span class="badge badge-red">管理员</span><span class="badge badge-gray">待接入</span></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="card card-pad">
+          <div class="card-head">
+            <div>
+              <h2>本阶段说明</h2>
+              <p>先保证账号、权限与数据基础正确，再逐步接入商品和预约流程。</p>
+            </div>
+          </div>
+          <div class="demo-note" style="margin:0">
+            第一步已经完成：SQLite 数据库、用户表、会话表、分类表、商品/预约/审核/日志基础表、注册、登录、退出、RBAC 权限中间件、登录失败锁定和基础审计日志。
+            下一阶段将实现商品草稿、提交审核、管理员审核和商品查询。
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script src="/app.js"></script>
+</body>
+</html>

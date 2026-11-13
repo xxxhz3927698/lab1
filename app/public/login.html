@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>登录 · 校园二手</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="auth-page">
+    <section class="auth-brand">
+      <div class="brand-mark">
+        <span class="brand-logo">循</span>
+        <span>校园二手 · ReLoop</span>
+      </div>
+      <div>
+        <h1>让闲置<br><span>继续流动</span></h1>
+        <p>面向校园与社区的二手交易平台。发布闲置、表达购买意向、确认交易，全流程状态可追溯。只做信息撮合，线下完成验货与交付。</p>
+        <ul class="brand-features">
+          <li><span class="dot"></span>买家：搜索、预约、查看交易进度</li>
+          <li><span class="dot"></span>卖家：发布商品、处理预约、完成交易</li>
+          <li><span class="dot"></span>管理员：审核、违规处理、日志与统计</li>
+        </ul>
+      </div>
+      <div class="auth-footnote">校园/社区二手交易系统 · 课程项目原型</div>
+    </section>
+
+    <section class="auth-panel">
+      <div class="auth-card">
+        <div class="auth-eyebrow">Welcome back</div>
+        <h2 id="authTitle">登录你的账号</h2>
+        <p class="auth-subtitle" id="authSubtitle">买家与卖家可自助注册；管理员账号由系统初始化。</p>
+
+        <div class="tabs" role="tablist">
+          <button class="tab active" id="tabLogin" type="button">登录</button>
+          <button class="tab" id="tabRegister" type="button">注册</button>
+        </div>
+
+        <div class="alert" id="authAlert"></div>
+
+        <form id="loginForm" class="form-grid" autocomplete="on">
+          <div class="field">
+            <label for="loginAccount">账号</label>
+            <input id="loginAccount" name="account" maxlength="32" required placeholder="例如：buyer01" autocomplete="username">
+          </div>
+          <div class="field">
+            <label for="loginPassword">密码</label>
+            <input id="loginPassword" name="password" type="password" maxlength="64" required placeholder="请输入密码" autocomplete="current-password">
+          </div>
+          <button class="btn btn-primary btn-block" id="loginButton" type="submit">登录</button>
+        </form>
+
+        <form id="registerForm" class="form-grid" style="display:none" autocomplete="off">
+          <div class="form-row">
+            <div class="field">
+              <label for="registerAccount">账号</label>
+              <input id="registerAccount" name="account" maxlength="32" required placeholder="3-32 位字母/数字/下划线" autocomplete="username">
+            </div>
+            <div class="field">
+              <label for="registerRole">角色</label>
+              <select id="registerRole" name="role" required>
+                <option value="BUYER">买家</option>
+                <option value="SELLER">卖家</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="registerDisplayName">昵称</label>
+            <input id="registerDisplayName" name="displayName" maxlength="30" required placeholder="展示给其他用户的名称">
+          </div>
+          <div class="field">
+            <label for="registerContact">联系方式（选填）</label>
+            <input id="registerContact" name="contact" maxlength="50" placeholder="手机号或微信号，仅用于线下联系">
+          </div>
+          <div class="field">
+            <label for="registerPassword">密码</label>
+            <input id="registerPassword" name="password" type="password" maxlength="64" required placeholder="至少 8 位，包含字母和数字" autocomplete="new-password">
+          </div>
+          <div class="field">
+            <label for="registerPassword2">确认密码</label>
+            <input id="registerPassword2" name="password2" type="password" maxlength="64" required placeholder="再次输入密码" autocomplete="new-password">
+          </div>
+          <button class="btn btn-primary btn-block" id="registerButton" type="submit">创建账号</button>
+        </form>
+
+        <div class="auth-divider">项目说明</div>
+        <div class="demo-note">
+          本原型只处理商品信息、预约和交易状态，不接入在线支付、担保交易、物流或即时聊天。实际付款和交付由买卖双方线下完成。
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast"></div>
+  <script>
+    const $ = (selector) => document.querySelector(selector);
+    const alertBox = $('#authAlert');
+    const toast = $('#toast');
+    let activeTab = 'login';
+
+    function showAlert(message, type = 'error') {
+      alertBox.textContent = message;
+      alertBox.className = 'alert show alert-' + type;
+    }
+
+    function clearAlert() {
+      alertBox.textContent = '';
+      alertBox.className = 'alert';
+    }
+
+    function showToast(message, isError = false) {
+      toast.textContent = message;
+      toast.className = 'toast show' + (isError ? ' error' : '');
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => { toast.className = 'toast'; }, 2600);
+    }
+
+    function setTab(tab) {
+      activeTab = tab;
+      const isLogin = tab === 'login';
+      $('#tabLogin').classList.toggle('active', isLogin);
+      $('#tabRegister').classList.toggle('active', !isLogin);
+      $('#loginForm').style.display = isLogin ? 'grid' : 'none';
+      $('#registerForm').style.display = isLogin ? 'none' : 'grid';
+      $('#authTitle').textContent = isLogin ? '登录你的账号' : '创建你的账号';
+      $('#authSubtitle').textContent = isLogin
+        ? '买家与卖家可自助注册；管理员账号由系统初始化。'
+        : '选择买家或卖家角色，注册后即可进入平台。管理员不开放公开注册。';
+      clearAlert();
+    }
+
+    async function api(path, options = {}) {
+      const response = await fetch(path, {
+        headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
+        ...options,
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        const error = new Error(data.error || '请求失败');
+        error.status = response.status;
+        error.data = data;
+        throw error;
+      }
+      return data;
+    }
+
+    async function onLogin(event) {
+      event.preventDefault();
+      clearAlert();
+      const button = $('#loginButton');
+      button.disabled = true;
+      button.textContent = '登录中…';
+      try {
+        const account = $('#loginAccount').value.trim();
+        const password = $('#loginPassword').value;
+        const data = await api('/api/auth/login', {
+          method: 'POST',
+          body: JSON.stringify({ account, password }),
+        });
+        showToast('登录成功，正在进入工作台…');
+        setTimeout(() => { location.href = '/'; }, 350);
+      } catch (error) {
+        showAlert(error.message);
+        button.disabled = false;
+        button.textContent = '登录';
+      }
+    }
+
+    async function onRegister(event) {
+      event.preventDefault();
+      clearAlert();
+      const password = $('#registerPassword').value;
+      if (password !== $('#registerPassword2').value) {
+        showAlert('两次输入的密码不一致');
+        return;
+      }
+      const button = $('#registerButton');
+      button.disabled = true;
+      button.textContent = '创建中…';
+      try {
+        const payload = {
+          account: $('#registerAccount').value.trim(),
+          password,
+          displayName: $('#registerDisplayName').value.trim(),
+          contact: $('#registerContact').value.trim(),
+          role: $('#registerRole').value,
+        };
+        await api('/api/auth/register', { method: 'POST', body: JSON.stringify(payload) });
+        showToast('账号创建成功，正在进入工作台…');
+        setTimeout(() => { location.href = '/'; }, 350);
+      } catch (error) {
+        showAlert(error.message);
+        button.disabled = false;
+        button.textContent = '创建账号';
+      }
+    }
+
+    $('#tabLogin').addEventListener('click', () => setTab('login'));
+    $('#tabRegister').addEventListener('click', () => setTab('register'));
+    $('#loginForm').addEventListener('submit', onLogin);
+    $('#registerForm').addEventListener('submit', onRegister);
+
+    // If already logged in, go straight to the workbench.
+    fetch('/api/auth/me').then((response) => {
+      if (response.ok) location.href = '/';
+    }).catch(() => {});
+  </script>
+</body>
+</html>
