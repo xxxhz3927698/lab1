@@ -1,0 +1,67 @@
+@startuml
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam shadowing false
+skinparam usecase {
+  BackgroundColor #FFF7B8
+  BorderColor #A68A00
+  ArrowColor #334155
+}
+title 图3 二手交易系统用例图
+
+actor "游客" as Guest
+actor "买家" as Buyer
+actor "卖家" as Seller
+actor "管理员" as Admin
+
+rectangle "校园二手交易系统" {
+  usecase "浏览 / 搜索商品" as UC_Browse
+  usecase "注册 / 登录" as UC_Auth
+  usecase "查看商品详情" as UC_Detail
+  usecase "发起预约" as UC_Reserve
+  usecase "取消预约" as UC_Cancel
+  usecase "查看我的预约" as UC_MyReservations
+  usecase "发布 / 编辑商品" as UC_Product
+  usecase "提交审核" as UC_Submit
+  usecase "处理预约" as UC_Handle
+  usecase "确认预约" as UC_Confirm
+  usecase "完成交易" as UC_Complete
+  usecase "审核商品" as UC_Review
+  usecase "违规移除商品" as UC_Violation
+  usecase "禁用 / 启用用户" as UC_User
+  usecase "查询操作日志" as UC_Log
+  usecase "查看统计" as UC_Stats
+}
+
+Guest --> UC_Browse
+Guest --> UC_Auth
+Guest --> UC_Detail
+Buyer --> UC_Browse
+Buyer --> UC_Detail
+Buyer --> UC_MyReservations
+Buyer --> UC_Reserve
+Buyer --> UC_Cancel
+Seller --> UC_Product
+Seller --> UC_Submit
+Seller --> UC_Handle
+Seller --> UC_Confirm
+Seller --> UC_Complete
+Seller --> UC_Stats
+Admin --> UC_Review
+Admin --> UC_Violation
+Admin --> UC_User
+Admin --> UC_Log
+Admin --> UC_Stats
+
+UC_Reserve .> UC_Detail : <<include>>
+UC_Cancel .> UC_MyReservations : <<include>>
+UC_Confirm .> UC_Handle : <<include>>
+UC_Complete .> UC_Handle : <<include>>
+UC_Review .> UC_Submit : <<include>>
+UC_User .> UC_Auth : <<include>>
+
+note bottom of UC_Violation
+  违规移除会同时取消
+  相关的待确认和已确认预约。
+end note
+
+@enduml

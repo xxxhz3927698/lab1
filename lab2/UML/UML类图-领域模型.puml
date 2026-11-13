@@ -1,0 +1,164 @@
+@startuml
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor #F8FAFC
+  BorderColor #64748B
+  ArrowColor #334155
+  HeaderBackgroundColor #E2E8F0
+}
+hide circle
+title 图1a 二手交易系统领域模型类图
+
+enum UserRole {
+  BUYER
+  SELLER
+  ADMIN
+}
+enum UserStatus {
+  ACTIVE
+  DISABLED
+}
+enum ProductStatus {
+  DRAFT
+  PENDING_REVIEW
+  ON_SALE
+  RESERVED
+  SOLD
+  OFF_SHELF
+  REJECTED
+  VIOLATION_REMOVED
+}
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  REJECTED
+  CANCELLED
+  EXPIRED
+  COMPLETED
+}
+
+abstract class User {
+  - userId : Long
+  - account : String
+  - passwordHash : String
+  - role : UserRole
+  - status : UserStatus
+  - displayName : String
+  - contact : String
+  + login(password) : Session
+  + disable() : void
+  + can(action) : boolean
+}
+class Buyer {
+  + createReservation(product) : Reservation
+}
+class Seller {
+  + publishProduct() : Product
+  + confirm(reservation) : void
+  + complete(reservation) : void
+}
+class Admin {
+  + review(product, result, reason) : void
+  + removeViolation(product, reason) : void
+  + disableUser(user) : void
+}
+class Session {
+  - token : String
+  - expiresAt : DateTime
+}
+class Category {
+  - categoryId : Long
+  - name : String
+  - status : String
+}
+class Product {
+  - productId : Long
+  - sellerId : Long
+  - categoryId : Long
+  - title : String
+  - description : String
+  - price : Decimal
+  - condition : String
+  - imageUrl : String
+  - status : ProductStatus
+  - version : int
+  - reviewReason : String
+  + submitForReview() : void
+  + updateKeyFields(fields) : void
+  + markReserved() : void
+  + markSold() : void
+  + removeForViolation(reason) : void
+  + isReservable() : boolean
+}
+class Reservation {
+  - reservationId : Long
+  - productId : Long
+  - buyerId : Long
+  - sellerId : Long
+  - status : ReservationStatus
+  - priceSnapshot : Decimal
+  - clientRequestId : String
+  - version : int
+  - expiresAt : DateTime
+  + confirm(price) : void
+  + cancel(reason) : void
+  + complete() : void
+  + expire() : void
+  + isActive() : boolean
+}
+class ModerationRecord {
+  - recordId : Long
+  - productId : Long
+  - adminId : Long
+  - action : String
+  - reason : String
+  - createdAt : DateTime
+}
+class OperationLog {
+  - logId : Long
+  - actorId : Long
+  - actionType : String
+  - targetType : String
+  - targetId : Long
+  - beforeState : String
+  - afterState : String
+  - requestId : String
+  - ip : String
+  - createdAt : DateTime
+}
+
+User <|-- Buyer
+User <|-- Seller
+User <|-- Admin
+User "1" -- "0..*" Session : 登录会话
+User "1" -- "0..*" OperationLog : 产生
+Seller "1" -- "0..*" Product : 发布
+Category "1" -- "0..*" Product : 分类
+Buyer "1" -- "0..*" Reservation : 发起
+Seller "1" -- "0..*" Reservation : 处理
+Product "1" -- "0..*" Reservation : 被预约
+Product "1" -- "0..*" ModerationRecord : 审核/违规
+Admin "1" -- "0..*" ModerationRecord : 处理
+User --> UserRole
+User --> UserStatus
+Product --> ProductStatus
+Reservation --> ReservationStatus
+
+note right of User
+  Buyer / Seller / Admin 是逻辑角色子类型，
+  持久化时可落地为 users.role 字段。
+end note
+
+note bottom of Product
+  version 用于旧页面并发控制；
+  商品状态和预约状态在同一事务中同步。
+end note
+
+note bottom of Reservation
+  同一商品最多一条 CONFIRMED；
+  同一买家同一商品最多一条 PENDING 或 CONFIRMED。
+end note
+
+@enduml

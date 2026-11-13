@@ -1,0 +1,46 @@
+@startuml
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam shadowing false
+skinparam state {
+  BackgroundColor #F8FAFC
+  BorderColor #64748B
+  ArrowColor #334155
+}
+title 图5 预约状态图
+
+state "待确认\nPENDING" as PENDING
+state "已确认\nCONFIRMED" as CONFIRMED
+state "已完成\nCOMPLETED" as COMPLETED
+state "已取消\nCANCELLED" as CANCELLED
+state "已拒绝\nREJECTED" as REJECTED
+state "已过期\nEXPIRED" as EXPIRED
+
+[*] --> PENDING : 买家发起预约\n（商品仍在售）
+PENDING --> CONFIRMED : 卖家确认\n（商品变为已预订）
+PENDING --> REJECTED : 卖家拒绝\n或商品被其他预约确认
+PENDING --> CANCELLED : 买家取消\n或商品修改/下架
+PENDING --> EXPIRED : 24 小时未处理
+CONFIRMED --> COMPLETED : 卖家完成线下交易
+CONFIRMED --> CANCELLED : 买家/卖家取消\n（填写原因）
+CONFIRMED --> EXPIRED : 7 天未完成\n（释放商品）
+COMPLETED --> [*]
+CANCELLED --> [*]
+REJECTED --> [*]
+EXPIRED --> [*]
+
+note right of PENDING
+  同一商品允许多条 PENDING；
+  同一买家同一商品只能有一条
+  PENDING 或 CONFIRMED。
+end note
+
+note bottom of CONFIRMED
+  同一商品最多一条 CONFIRMED；
+  确认与商品状态更新在同一事务中完成。
+end note
+
+note right of COMPLETED
+  终态：不能再次取消或恢复。
+end note
+
+@enduml

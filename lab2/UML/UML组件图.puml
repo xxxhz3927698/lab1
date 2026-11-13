@@ -1,0 +1,74 @@
+@startuml
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam shadowing false
+skinparam componentStyle rectangle
+skinparam component {
+  BackgroundColor #F8FAFC
+  BorderColor #64748B
+  ArrowColor #334155
+}
+title 图2 二手交易系统组件图
+
+package "客户端" {
+  [买家 Web]
+  [卖家 Web]
+  [管理员 Web]
+}
+
+package "接入层" {
+  [API 网关 / 会话鉴权]
+}
+
+package "业务模块" {
+  [用户与权限模块]
+  [商品管理模块]
+  [审核与违规模块]
+  [查询模块]
+  [预约与交易模块]
+  [统计模块]
+  [日志模块]
+  [到期任务]
+}
+
+database "数据库\nMySQL / SQLite" as DB
+cloud "图片 URL / 对象存储" as OSS
+
+[买家 Web] --> [API 网关 / 会话鉴权] : HTTPS / JSON
+[卖家 Web] --> [API 网关 / 会话鉴权] : HTTPS / JSON
+[管理员 Web] --> [API 网关 / 会话鉴权] : HTTPS / JSON
+
+[API 网关 / 会话鉴权] --> [用户与权限模块] : 登录 / 角色校验
+[API 网关 / 会话鉴权] --> [商品管理模块]
+[API 网关 / 会话鉴权] --> [查询模块]
+[API 网关 / 会话鉴权] --> [预约与交易模块]
+[API 网关 / 会话鉴权] --> [审核与违规模块]
+[API 网关 / 会话鉴权] --> [统计模块]
+[API 网关 / 会话鉴权] --> [日志模块]
+
+[商品管理模块] --> [审核与违规模块] : 提交审核
+[商品管理模块] --> DB : 商品 / 分类
+[商品管理模块] --> OSS : 图片引用
+[查询模块] --> DB : 条件查询
+[预约与交易模块] --> DB : 预约 / 商品状态
+[预约与交易模块] --> [商品管理模块] : 锁定商品
+[预约与交易模块] --> [日志模块] : 写操作日志
+[审核与违规模块] --> DB : 审核 / 违规记录
+[审核与违规模块] --> [预约与交易模块] : 取消相关预约
+[审核与违规模块] --> [日志模块] : 写操作日志
+[用户与权限模块] --> DB : 用户 / 会话
+[统计模块] --> DB : 聚合查询
+[日志模块] --> DB : 日志查询
+[到期任务] --> [预约与交易模块] : 扫描超时预约
+[用户与权限模块] --> [日志模块] : 登录审计
+
+note right of [API 网关 / 会话鉴权]
+  只负责认证、会话和角色入口；
+  业务规则放在各业务模块中。
+end note
+
+note bottom of [预约与交易模块]
+  商品与预约状态在同一事务中更新；
+  商品行锁和唯一索引保证只有一个确认预约。
+end note
+
+@enduml

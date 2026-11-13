@@ -1,0 +1,83 @@
+@startuml
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam shadowing false
+skinparam sequence {
+  ArrowColor #334155
+  ActorBorderColor #334155
+  LifeLineBorderColor #94A3B8
+  ParticipantBorderColor #64748B
+  ParticipantBackgroundColor #F8FAFC
+}
+title 图7 卖家确认预约时序图
+autonumber
+
+actor "买家 A" as BuyerA
+actor "买家 B" as BuyerB
+actor "卖家" as Seller
+participant "预约控制器" as Controller
+participant "预约服务" as Service
+participant "商品仓储" as ProductRepo
+participant "预约仓储" as ReservationRepo
+database "数据库" as DB
+participant "日志服务" as Log
+
+BuyerA -> Controller : POST /api/reservations\n(productId, clientRequestId)
+Controller -> Service : create(buyerA, productId, requestId)
+Service -> ProductRepo : 查询商品状态
+Service -> ReservationRepo : 查询有效预约
+alt 商品在售且无重复
+  Service -> ReservationRepo : INSERT PENDING\n(expiresAt = now + 24h)
+  Service -> Log : 记录 RESERVATION_CREATE
+  Controller --> BuyerA : 201 待确认预约
+else 重复或状态冲突
+  Controller --> BuyerA : 409 冲突
+end
+
+BuyerB -> Controller : POST /api/reservations\n(productId, clientRequestId)
+Controller -> Service : create(buyerB, productId, requestId)
+Service -> ReservationRepo : INSERT PENDING
+Controller --> BuyerB : 201 待确认预约
+
+Seller -> Controller : POST /api/seller/reservations/{id}/confirm\n(version)
+Controller -> Service : confirm(seller, reservationId, version)
+Service -> DB : BEGIN IMMEDIATE
+Service -> ProductRepo : SELECT product FOR UPDATE
+ProductRepo --> Service : product.status = ON_SALE
+
+alt 版本一致且商品在售
+  Service -> DB : UPDATE product\nstatus = RESERVED, version + 1
+  Service -> DB : UPDATE reservation A\nstatus = CONFIRMED, price_snapshot
+  Service -> DB : UPDATE other PENDING\nstatus = REJECTED
+  Service -> Log : 记录 RESERVATION_CONFIRM
+  Service -> DB : INSERT operation_log
+  Service -> DB : COMMIT
+  Service --> Controller : CONFIRMED
+  Controller --> Seller : 200 已确认
+  BuyerB -> Controller : 刷新预约列表
+  Controller --> BuyerB : 已拒绝（商品已被其他预约确认）
+else 版本过期或已被处理
+  Service -> DB : ROLLBACK
+  Service --> Controller : 409
+  Controller --> Seller : 409 最新状态
+end
+
+Seller -> Controller : POST /api/seller/reservations/{id}/complete\n(version)
+Controller -> Service : complete(seller, reservationId, version)
+Service -> DB : BEGIN IMMEDIATE
+Service -> DB : UPDATE product\nstatus = SOLD, sold_at = now
+Service -> DB : UPDATE reservation\nstatus = COMPLETED, completed_at = now
+Service -> Log : 记录 RESERVATION_COMPLETE
+Service -> DB : COMMIT
+Controller --> Seller : 200 已完成
+
+note over ProductRepo, DB
+  商品行锁 + 唯一索引保证：
+  同一商品最多一条 CONFIRMED 预约。
+end note
+
+note over Controller
+  旧页面携带的 version 不一致时
+  直接返回 409，不执行部分写入。
+end note
+
+@enduml

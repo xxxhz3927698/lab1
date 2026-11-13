@@ -1,0 +1,57 @@
+@startuml
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam shadowing false
+skinparam state {
+  BackgroundColor #F8FAFC
+  BorderColor #64748B
+  ArrowColor #334155
+}
+title 图4 商品状态图
+
+state "草稿\nDRAFT" as DRAFT
+state "待审核\nPENDING_REVIEW" as PENDING
+state "在售\nON_SALE" as ON_SALE
+state "已预订\nRESERVED" as RESERVED
+state "已售出\nSOLD" as SOLD
+state "已下架\nOFF_SHELF" as OFF_SHELF
+state "审核未通过\nREJECTED" as REJECTED
+state "违规移除\nVIOLATION_REMOVED" as REMOVED
+
+[*] --> DRAFT : 卖家新建
+DRAFT --> PENDING : 提交审核
+PENDING --> ON_SALE : 管理员通过
+PENDING --> REJECTED : 管理员驳回\n（填写理由）
+PENDING --> DRAFT : 卖家撤回
+REJECTED --> DRAFT : 卖家修改
+REJECTED --> PENDING : 修改后重新提交
+ON_SALE --> PENDING : 修改关键字段\n（暂停公开和预约）
+ON_SALE --> OFF_SHELF : 卖家下架
+OFF_SHELF --> PENDING : 修改后重新提交
+ON_SALE --> RESERVED : 卖家确认预约\n（事务锁）
+RESERVED --> SOLD : 卖家标记完成
+RESERVED --> ON_SALE : 取消已确认预约\n或 7 天超时
+ON_SALE --> REMOVED : 管理员违规移除
+PENDING --> REMOVED : 管理员违规移除
+RESERVED --> REMOVED : 管理员违规移除
+SOLD --> [*]
+REMOVED --> [*]
+
+note right of SOLD
+  终态：不能重新上架、
+  不能再次预约。
+end note
+
+note right of REMOVED
+  终态：保留历史记录，
+  不能恢复为在售。
+end note
+
+note bottom of RESERVED
+  未列出的转换一律禁止：
+  草稿不能直接上架；
+  待审核不能直接预订；
+  已预订不能直接下架；
+  已售出不能重新售卖。
+end note
+
+@enduml

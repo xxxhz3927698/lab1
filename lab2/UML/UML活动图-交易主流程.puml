@@ -1,0 +1,44 @@
+@startuml
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam shadowing false
+skinparam activity {
+  BackgroundColor #F8FAFC
+  BorderColor #64748B
+  ArrowColor #334155
+  DiamondBackgroundColor #FFF7B8
+  DiamondBorderColor #A68A00
+}
+title 图6 交易主流程活动图
+
+start
+:买家登录;
+:按关键词、分类、价格和状态查询商品;
+if (找到在售商品?) then (是)
+  :查看商品详情;
+  :填写预约留言;
+  :提交预约（客户端请求编号）;
+  if (商品在售且无有效预约?) then (是)
+    :创建待确认预约\n24 小时有效;
+    :商品仍保持 ON_SALE;
+    :卖家查看多条待确认预约;
+    if (卖家确认其中一条?) then (是)
+      :事务锁定商品行;
+      :商品 -> RESERVED\n预约 -> CONFIRMED\n其他待确认 -> REJECTED;
+      :线下验货、付款、交付;
+      if (交易完成?) then (是)
+        :卖家标记完成\n商品 -> SOLD\n预约 -> COMPLETED;
+      else (取消或 7 天超时)
+        :预约 -> CANCELLED / EXPIRED\n商品 -> ON_SALE;
+      endif
+    else (拒绝或 24 小时超时)
+      :预约 -> REJECTED / EXPIRED\n商品仍在售;
+    endif
+  else (重复或状态冲突)
+    :返回 409\n展示已有预约或最新状态;
+  endif
+else (否)
+  :显示空结果\n调整查询条件;
+endif
+stop
+
+@enduml

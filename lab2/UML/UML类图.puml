@@ -1,0 +1,266 @@
+@startuml
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor #F8FAFC
+  BorderColor #64748B
+  ArrowColor #334155
+  HeaderBackgroundColor #E2E8F0
+}
+hide circle
+title 图1 二手交易系统核心类图
+
+package "领域模型 domain" {
+  enum UserRole {
+    BUYER
+    SELLER
+    ADMIN
+  }
+  enum UserStatus {
+    ACTIVE
+    DISABLED
+  }
+  enum ProductStatus {
+    DRAFT
+    PENDING_REVIEW
+    ON_SALE
+    RESERVED
+    SOLD
+    OFF_SHELF
+    REJECTED
+    VIOLATION_REMOVED
+  }
+  enum ReservationStatus {
+    PENDING
+    CONFIRMED
+    REJECTED
+    CANCELLED
+    EXPIRED
+    COMPLETED
+  }
+
+  abstract class User {
+    - userId : Long
+    - account : String
+    - passwordHash : String
+    - role : UserRole
+    - status : UserStatus
+    - displayName : String
+    - contact : String
+    + login(password) : Session
+    + disable() : void
+    + can(action) : boolean
+  }
+  class Buyer {
+    + createReservation(product) : Reservation
+  }
+  class Seller {
+    + publishProduct() : Product
+    + confirm(reservation) : void
+    + complete(reservation) : void
+  }
+  class Admin {
+    + review(product, result, reason) : void
+    + removeViolation(product, reason) : void
+    + disableUser(user) : void
+  }
+  class Category {
+    - categoryId : Long
+    - name : String
+    - status : String
+  }
+  class Product {
+    - productId : Long
+    - sellerId : Long
+    - categoryId : Long
+    - title : String
+    - description : String
+    - price : Decimal
+    - condition : String
+    - imageUrls : List<String>
+    - status : ProductStatus
+    - version : int
+    - reviewReason : String
+    + submitForReview() : void
+    + updateKeyFields(fields) : void
+    + markReserved() : void
+    + markSold() : void
+    + removeForViolation(reason) : void
+    + isReservable() : boolean
+  }
+  class Reservation {
+    - reservationId : Long
+    - productId : Long
+    - buyerId : Long
+    - sellerId : Long
+    - status : ReservationStatus
+    - priceSnapshot : Decimal
+    - clientRequestId : String
+    - version : int
+    - expiresAt : DateTime
+    + confirm(price) : void
+    + cancel(reason) : void
+    + complete() : void
+    + expire() : void
+    + isActive() : boolean
+  }
+  class ModerationRecord {
+    - recordId : Long
+    - productId : Long
+    - adminId : Long
+    - action : String
+    - reason : String
+    - createdAt : DateTime
+  }
+  class OperationLog {
+    - logId : Long
+    - actorId : Long
+    - actionType : String
+    - targetType : String
+    - targetId : Long
+    - beforeState : String
+    - afterState : String
+    - requestId : String
+    - ip : String
+    - createdAt : DateTime
+  }
+  class Session {
+    - token : String
+    - expiresAt : DateTime
+  }
+}
+
+User <|-- Buyer
+User <|-- Seller
+User <|-- Admin
+Seller "1" -- "0..*" Product : 发布
+Category "1" -- "0..*" Product : 分类
+Buyer "1" -- "0..*" Reservation : 发起
+Seller "1" -- "0..*" Reservation : 处理
+Product "1" -- "0..*" Reservation : 被预约
+Product "1" -- "0..*" ModerationRecord : 审核/违规
+Admin "1" -- "0..*" ModerationRecord : 处理
+User "1" -- "0..*" OperationLog : 产生
+User "1" -- "0..*" Session : 登录会话
+User --> UserRole
+User --> UserStatus
+Product --> ProductStatus
+Reservation --> ReservationStatus
+
+package "应用服务 service" {
+  class AuthService {
+    + register(account, password, role) : User
+    + login(account, password) : Session
+    + logout(token) : void
+    + checkPermission(user, action, resource) : boolean
+  }
+  class ProductService {
+    + createDraft(seller, data) : Product
+    + updateDraft(seller, productId, data, version) : Product
+    + submitForReview(seller, productId, version) : void
+    + updatePublished(seller, productId, data, version) : Product
+    + delist(seller, productId, version) : void
+    + getDetail(productId, viewer) : Product
+  }
+  class ReviewService {
+    + listPending(page) : Page<Product>
+    + approve(admin, productId, version) : void
+    + reject(admin, productId, reason, version) : void
+    + removeViolation(admin, productId, reason) : void
+  }
+  class SearchService {
+    + search(criteria, page, sort) : Page<Product>
+  }
+  class ReservationService {
+    + create(buyer, productId, requestId) : Reservation
+    + confirm(seller, reservationId, version) : Reservation
+    + cancel(user, reservationId, reason, version) : void
+    + complete(seller, reservationId, version) : void
+    + expirePending() : int
+    + expireConfirmed() : int
+  }
+  class StatsService {
+    + sellerStats(seller, from, to) : SellerStats
+    + platformStats(from, to) : PlatformStats
+  }
+  class LogService {
+    + record(actor, action, target, before, after, reason) : void
+    + query(criteria, page) : Page<OperationLog>
+  }
+}
+
+package "仓储接口 repository" {
+  interface UserRepository {
+    + findByAccount(account) : User
+    + save(user) : void
+  }
+  interface ProductRepository {
+    + findById(id) : Product
+    + findByIdForUpdate(id) : Product
+    + save(product) : void
+    + search(criteria) : Page<Product>
+  }
+  interface ReservationRepository {
+    + findActive(buyerId, productId) : Reservation
+    + countConfirmed(productId) : int
+    + findByIdForUpdate(id) : Reservation
+    + save(reservation) : void
+    + findExpired(now) : List<Reservation>
+  }
+  interface CategoryRepository {
+    + findAllEnabled() : List<Category>
+    + findById(id) : Category
+  }
+  interface ModerationRepository {
+    + save(record) : void
+  }
+  interface OperationLogRepository {
+    + append(log) : void
+    + query(criteria) : Page<OperationLog>
+  }
+}
+
+package "接口层 web" {
+  class AuthController
+  class BuyerController
+  class SellerController
+  class AdminController
+  class StatsController
+}
+
+AuthController ..> AuthService
+BuyerController ..> SearchService
+BuyerController ..> ReservationService
+BuyerController ..> ProductService
+SellerController ..> ProductService
+SellerController ..> ReservationService
+SellerController ..> StatsService
+AdminController ..> ReviewService
+AdminController ..> AuthService
+AdminController ..> LogService
+AdminController ..> StatsService
+StatsController ..> StatsService
+
+AuthService ..> UserRepository
+ProductService ..> ProductRepository
+ProductService ..> CategoryRepository
+ProductService ..> LogService
+ReviewService ..> ProductRepository
+ReviewService ..> ReservationRepository
+ReviewService ..> ModerationRepository
+ReviewService ..> LogService
+SearchService ..> ProductRepository
+ReservationService ..> ReservationRepository
+ReservationService ..> ProductRepository
+ReservationService ..> LogService
+StatsService ..> ProductRepository
+StatsService ..> ReservationRepository
+LogService ..> OperationLogRepository
+
+note right of User
+  Buyer / Seller / Admin 是逻辑角色子类型，
+  持久化时可落地为 users.role 字段。
+end note
+
+@enduml

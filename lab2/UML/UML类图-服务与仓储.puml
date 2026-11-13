@@ -1,0 +1,134 @@
+@startuml
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor #F8FAFC
+  BorderColor #64748B
+  ArrowColor #334155
+  HeaderBackgroundColor #E2E8F0
+}
+hide circle
+title 图1b 二手交易系统服务与仓储类图
+
+package "接口层 web" {
+  class AuthController
+  class BuyerController
+  class SellerController
+  class AdminController
+  class StatsController
+}
+
+package "应用服务 service" {
+  class AuthService {
+    + register(account, password, role) : User
+    + login(account, password) : Session
+    + logout(token) : void
+    + checkPermission(user, action, resource) : boolean
+  }
+  class ProductService {
+    + createDraft(seller, data) : Product
+    + updateDraft(seller, productId, data, version) : Product
+    + submitForReview(seller, productId, version) : void
+    + updatePublished(seller, productId, data, version) : Product
+    + delist(seller, productId, version) : void
+    + getDetail(productId, viewer) : Product
+  }
+  class ReviewService {
+    + listPending(page) : Page<Product>
+    + approve(admin, productId, version) : void
+    + reject(admin, productId, reason, version) : void
+    + removeViolation(admin, productId, reason) : void
+  }
+  class SearchService {
+    + search(criteria, page, sort) : Page<Product>
+  }
+  class ReservationService {
+    + create(buyer, productId, requestId) : Reservation
+    + confirm(seller, reservationId, version) : Reservation
+    + cancel(user, reservationId, reason, version) : void
+    + complete(seller, reservationId, version) : void
+    + expirePending() : int
+    + expireConfirmed() : int
+  }
+  class StatsService {
+    + sellerStats(seller, from, to) : SellerStats
+    + platformStats(from, to) : PlatformStats
+  }
+  class LogService {
+    + record(actor, action, target, before, after, reason) : void
+    + query(criteria, page) : Page<OperationLog>
+  }
+}
+
+package "仓储接口 repository" {
+  interface UserRepository {
+    + findByAccount(account) : User
+    + save(user) : void
+  }
+  interface ProductRepository {
+    + findById(id) : Product
+    + findByIdForUpdate(id) : Product
+    + save(product) : void
+    + search(criteria) : Page<Product>
+  }
+  interface ReservationRepository {
+    + findActive(buyerId, productId) : Reservation
+    + countConfirmed(productId) : int
+    + findByIdForUpdate(id) : Reservation
+    + save(reservation) : void
+    + findExpired(now) : List<Reservation>
+  }
+  interface CategoryRepository {
+    + findAllEnabled() : List<Category>
+    + findById(id) : Category
+  }
+  interface ModerationRepository {
+    + save(record) : void
+  }
+  interface OperationLogRepository {
+    + append(log) : void
+    + query(criteria) : Page<OperationLog>
+  }
+}
+
+AuthController ..> AuthService
+BuyerController ..> SearchService
+BuyerController ..> ReservationService
+BuyerController ..> ProductService
+SellerController ..> ProductService
+SellerController ..> ReservationService
+SellerController ..> StatsService
+AdminController ..> ReviewService
+AdminController ..> AuthService
+AdminController ..> LogService
+AdminController ..> StatsService
+StatsController ..> StatsService
+
+AuthService ..> UserRepository
+ProductService ..> ProductRepository
+ProductService ..> CategoryRepository
+ProductService ..> LogService
+ReviewService ..> ProductRepository
+ReviewService ..> ReservationRepository
+ReviewService ..> ModerationRepository
+ReviewService ..> LogService
+SearchService ..> ProductRepository
+ReservationService ..> ReservationRepository
+ReservationService ..> ProductRepository
+ReservationService ..> LogService
+StatsService ..> ProductRepository
+StatsService ..> ReservationRepository
+LogService ..> OperationLogRepository
+
+note right of ReservationService
+  confirm() 在同一事务中锁定商品行，
+  更新商品、目标预约和其他待确认预约。
+end note
+
+note bottom of LogService
+  关键状态变更与日志在同一事务中写入；
+  日志不可通过业务接口修改或删除。
+end note
+
+@enduml
