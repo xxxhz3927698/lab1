@@ -57,6 +57,7 @@ test('buyer can register, read session and logout', async () => {
   });
   assert.equal(register.response.status, 201);
   assert.equal(register.data.user.role, 'BUYER');
+  assert.doesNotMatch(register.response.headers.getSetCookie()[0], /;\s*Secure/i);
   assert.equal(register.data.user.displayName, '测试买家');
 
   const me = await request('/api/auth/me');

@@ -56,7 +56,7 @@ function setSessionCookie(res, token) {
   res.cookie(COOKIE_NAME, token, {
     httpOnly: true,
     sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production',
+    secure: process.env.COOKIE_SECURE === 'true',
     maxAge: SESSION_HOURS * 60 * 60 * 1000,
     path: '/',
   });

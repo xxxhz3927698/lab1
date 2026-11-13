@@ -41,6 +41,22 @@ PORT=3100 npm start
 ADMIN_ACCOUNT=admin ADMIN_PASSWORD='你的密码' npm start
 ```
 
+### 演示数据（可选）
+
+```bash
+npm run seed:demo
+```
+
+会创建演示卖家 `seller_demo / Demo12345`、买家 `buyer_demo / Demo12345` 和 6 件不同状态的商品。
+
+### HTTPS 部署
+
+本地 HTTP 调试时不要设置 `COOKIE_SECURE=true`。只有部署到 HTTPS 时才设置：
+
+```bash
+COOKIE_SECURE=true npm start
+```
+
 首次登录后建议使用“修改密码”接口或重新初始化数据库。原型阶段管理员账号不开放公开注册。
 
 ## 已实现
