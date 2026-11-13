@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>实验二 软件设计与建模 实验报告</title>
+<style>
+  @page { size: A4; margin: 16mm 14mm 16mm 14mm; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    color: #1f2937;
+    font-family: "Microsoft YaHei", "Noto Sans CJK SC", "PingFang SC", sans-serif;
+    font-size: 10.5pt;
+    line-height: 1.72;
+  }
+  h1, h2, h3, h4 { color: #111827; }
+  h1 { font-size: 26pt; margin: 0 0 5mm; letter-spacing: -0.04em; }
+  h2 { margin: 9mm 0 3mm; padding-left: 4mm; border-left: 4px solid #ffe60f; font-size: 16pt; }
+  h3 { margin: 6mm 0 2mm; font-size: 12.5pt; color: #1e3a8a; }
+  h4 { margin: 4mm 0 1.5mm; font-size: 11pt; }
+  p { margin: 2mm 0; text-align: justify; }
+  ul, ol { margin: 2mm 0 2mm 5mm; padding-left: 4mm; }
+  li { margin: 1mm 0; }
+  table { width: 100%; border-collapse: collapse; margin: 3mm 0; font-size: 9pt; page-break-inside: avoid; }
+  th, td { border: 0.6pt solid #a8b0bd; padding: 1.6mm 1.8mm; vertical-align: top; }
+  th { background: #eef2f7; color: #111827; font-weight: 700; }
+  tr:nth-child(even) td { background: #fafbfc; }
+  blockquote { margin: 3mm 0; padding: 3mm 4mm; border-left: 3px solid #ffe60f; background: #fffbe6; }
+  .cover { height: 255mm; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; page-break-after: always; }
+  .cover .mark { width: 24mm; height: 24mm; display: grid; place-items: center; border-radius: 7mm; background: #111; color: #ffe60f; font-size: 32pt; font-weight: 900; }
+  .cover .project { margin-top: 8mm; color: #6b7280; font-size: 14pt; }
+  .cover .meta { margin-top: 20mm; color: #4b5563; font-size: 11pt; line-height: 2.1; }
+  .cover .url { margin-top: 12mm; color: #2563eb; font-size: 9.5pt; word-break: break-all; }
+  .toc { page-break-after: always; }
+  .toc h2 { margin-top: 0; }
+  .toc ol { line-height: 2; }
+  .section { page-break-before: always; }
+  .figure { margin: 5mm 0 6mm; text-align: center; page-break-inside: avoid; }
+  .figure img { max-width: 100%; height: auto; display: block; margin: 0 auto; border: 0.5pt solid #d1d5db; background: #fff; }
+  .figure .caption { margin-top: 2mm; color: #4b5563; font-size: 9pt; }
+  .figure.wide img { max-height: 175mm; width: auto; max-width: 100%; }
+  .figure.tall img { max-height: 205mm; width: auto; max-width: 100%; }
+  .figure.mid img { max-height: 145mm; width: auto; max-width: 100%; }
+  .note { padding: 3mm 4mm; border: 1px solid #f3df6a; border-radius: 2mm; background: #fffbe6; font-size: 9.5pt; }
+  .note.blue { border-color: #bfdbfe; background: #eff6ff; }
+  .note.red { border-color: #fecaca; background: #fef2f2; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+  .small { color: #64748b; font-size: 9pt; }
+  code { background: #f3f4f6; padding: 0 1mm; border-radius: 1mm; font-family: Consolas, monospace; font-size: 0.93em; }
+  .tag { display: inline-block; padding: 0.4mm 1.8mm; border-radius: 999px; background: #fff3b0; font-size: 8.5pt; font-weight: 700; }
+  .ui-page { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; page-break-after: always; align-items: start; }
+  .ui-item { page-break-inside: avoid; }
+  .ui-item img { width: 100%; height: auto; display: block; border: 0.5pt solid #d1d5db; border-radius: 2mm; background: #fff; }
+  .ui-item h4 { margin: 2.5mm 0 1mm; font-size: 10.5pt; }
+  .ui-item p { margin: 0 0 1.5mm; font-size: 8.8pt; line-height: 1.55; color: #374151; }
+  .ui-item .meta { color: #6b7280; font-size: 8.2pt; }
+  .ai-use { margin: 4mm 0; padding: 3mm 4mm; border: 1px solid #e5e7eb; border-radius: 2mm; page-break-inside: avoid; }
+  .ai-use h3 { margin: 0 0 2mm; font-size: 11.5pt; }
+  .ai-use p { margin: 1.2mm 0; font-size: 9.3pt; }
+  .ai-use .label { color: #6b7280; font-weight: 700; }
+  .version { width: 100%; }
+  .version td:first-child { width: 30%; color: #4b5563; }
+  .footer-note { margin-top: 8mm; color: #9ca3af; font-size: 8.5pt; text-align: center; }
+</style>
+</head>
+<body>
+
+<!-- Cover -->
+<div class="cover">
+  <div class="mark">循</div>
+  <h1>软件设计与建模<br>实验报告</h1>
+  <div class="project">校园 / 社区二手交易系统</div>
+  <div class="meta">
+    学号：241220039<br>
+    姓名：徐梓皓<br>
+    课程：软件工程<br>
+    日期：2026 年 11 月 13 日
+  </div>
+  <div class="url">公开仓库：https://github.com/xxxhz3927698/lab1</div>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <h2>目录</h2>
+  <ol>
+    <li>项目概况</li>
+    <li>软件架构设计</li>
+    <li>UML 建模</li>
+    <li>数据与状态设计</li>
+    <li>UI 界面设计</li>
+    <li>AI 辅助设计过程</li>
+    <li>实验总结</li>
+    <li>版本信息</li>
+  </ol>
+  <div class="note blue" style="margin-top:20mm">
+    本报告以实验一的需求规格说明书为输入，完成二手交易系统的模块划分、UML 建模、数据状态设计和移动端 UI 高保真设计。报告中的图表和 UI 图片均保存在仓库 <code>lab2/</code> 目录中，提交包中的图片与报告引用一致。
+  </div>
+</div>
+
+<!-- 1 -->
+<div class="section">
+  <h2>1 项目概况</h2>
+  <h3>1.1 要解决的问题</h3>
+  <p>校园或社区中存在大量闲置物品，但缺少一个受管理的、可追溯的交易信息发布与购买意向撮合渠道。卖家需要低成本发布商品并处理购买意向；买家需要按关键词、分类、价格和状态查找商品；平台需要审核商品、处理违规并保留关键操作记录。系统只负责信息发布、预约撮合和交易状态记录，实际验货、交付和付款由买卖双方线下完成。</p>
+
+  <h3>1.2 项目目标</h3>
+  <ol>
+    <li>支持买家、卖家和管理员三类账号，按角色隔离权限。</li>
+    <li>支持商品从草稿、审核、发布、预订到售出的完整状态管理。</li>
+    <li>支持买家发起购买意向、卖家确认、取消和交易完成。</li>
+    <li>支持关键词、分类、价格和状态的多条件查询，以及卖家和平台统计。</li>
+    <li>对多人预约、重复预约、旧页面操作、违规下架等异常给出确定结果。</li>
+    <li>保存关键操作日志，保证商品与预约状态一致、可追溯。</li>
+  </ol>
+
+  <h3>1.3 系统范围</h3>
+  <p>系统范围包括账号注册登录与权限控制、商品草稿与审核发布、商品查询与详情、预约与确认、取消与完成、违规处理、统计汇总、操作日志，以及基础安全、性能和可靠性要求。业务核心是“卖家发布商品—买家表达购买意向—卖家确认—线下完成”的信息撮合，不处理资金。</p>
+
+  <h3>1.4 明确不实现的内容</h3>
+  <p>本系统不实现在线支付、担保交易、退款结算、物流配送、即时聊天、评价体系、推荐算法、实名认证、第三方登录和短信服务。上述内容如后续需要，必须重新进行访谈、范围评审和需求分析。</p>
+
+  <h3>1.5 主要功能模块</h3>
+  <table>
+    <tr><th style="width:22%">模块</th><th>主要功能</th><th style="width:26%">对应实验一需求</th></tr>
+    <tr><td>用户与认证</td><td>买家/卖家自助注册、登录、退出、会话管理、管理员受控创建、角色权限、账号禁用</td><td>REQ-001～REQ-005、REQ-023</td></tr>
+    <tr><td>商品管理</td><td>草稿、编辑、提交审核、重新审核、下架、商品详情</td><td>REQ-006～REQ-009、REQ-012</td></tr>
+    <tr><td>审核与违规</td><td>管理员审核通过、驳回理由、违规移除、关联预约取消</td><td>REQ-007、REQ-010</td></tr>
+    <tr><td>查询</td><td>关键词、分类、价格区间、状态、排序、分页</td><td>REQ-011、REQ-022</td></tr>
+    <tr><td>预约与交易</td><td>发起预约、多条待确认、卖家确认、取消、完成、24 小时/7 天过期、幂等与并发控制</td><td>REQ-013～REQ-019、REQ-024、REQ-027</td></tr>
+    <tr><td>统计</td><td>卖家商品/预约统计、平台商品状态、分类、每日新增和每日完成</td><td>REQ-020、REQ-026</td></tr>
+    <tr><td>操作日志</td><td>关键操作留痕、不可修改、管理员按条件查询</td><td>REQ-019、REQ-028</td></tr>
+    <tr><td>基础数据</td><td>商品分类、商品图片 URL、数据库存储</td><td>REQ-011、REQ-029</td></tr>
+  </table>
+</div>
+
+<!-- 2 -->
+<div class="section">
+  <h2>2 软件架构设计</h2>
+  <h3>2.1 架构风格与总体思路</h3>
+  <p>本项目采用“模块化单体 + 分层架构”。客户端按角色分为买家、卖家和管理员三个入口；服务端以 API 网关统一处理 HTTPS、会话和角色校验，再进入用户、商品、审核、查询、预约交易、统计和日志等业务模块；业务模块通过仓储接口访问数据库。这样可以在课程项目的规模下保持较低部署复杂度，同时把业务边界、状态规则和数据访问分开。</p>
+  <p>选择模块化单体而不是微服务的原因：第一，商品状态和预约状态需要在同一事务中更新，单体数据库更容易保证一致性；第二，项目团队规模小，微服务会引入服务发现、分布式事务和运维成本；第三，模块之间通过接口和包边界隔离，后续如果某个模块访问量增大，可以再拆分。代价是模块边界需要人工约束，不能随意跨模块直接访问数据表。</p>
+
+  <h3>2.2 模块划分与职责</h3>
+  <table>
+    <tr><th style="width:23%">模块</th><th>职责边界</th><th style="width:28%">不负责的内容</th></tr>
+    <tr><td>用户与权限模块</td><td>注册、登录、会话、角色、账号状态、禁用/启用；为其他模块提供当前用户和权限判断</td><td>不处理商品、预约和统计业务</td></tr>
+    <tr><td>商品管理模块</td><td>草稿、编辑、提交审核、重新审核、下架、商品详情、版本号与商品状态</td><td>不直接确认预约；状态变更由预约交易模块在事务中触发</td></tr>
+    <tr><td>审核与违规模块</td><td>待审核队列、通过/驳回、违规移除、审核/违规记录</td><td>不修改商品正文；不参与买卖交易</td></tr>
+    <tr><td>查询模块</td><td>公开商品的条件查询、分页、排序、详情可见性</td><td>不改变商品状态</td></tr>
+    <tr><td>预约与交易模块</td><td>预约创建、确认、取消、完成、过期、重复预约、幂等、并发锁和价格快照</td><td>不代替卖家做交易决策；不处理资金</td></tr>
+    <tr><td>统计模块</td><td>卖家统计、平台商品状态/分类/每日新增/每日完成</td><td>不修改业务数据</td></tr>
+    <tr><td>日志模块</td><td>关键操作日志写入、不可修改、管理员查询</td><td>不作为业务状态的主数据源</td></tr>
+    <tr><td>基础数据</td><td>分类、商品图片 URL、数据库连接和索引</td><td>不承载业务规则</td></tr>
+  </table>
+
+  <div class="figure wide">
+    <img src="UML/UML组件图.png" alt="组件图">
+    <div class="caption">图 1 二手交易系统组件图：客户端、接入层、业务模块、数据库与对象存储</div>
+  </div>
+  <p>组件图强调了三个设计约束：第一，客户端只通过 API 网关访问业务模块，不直接访问数据库；第二，预约与交易模块要调用商品模块的锁定能力，不能自己改商品表；第三，审核与违规模块在移除商品时要联动预约模块取消相关预约，并统一写日志模块。</p>
+
+  <h3>2.3 模块之间的交互</h3>
+  <table>
+    <tr><th style="width:18%">调用方</th><th style="width:22%">被调用方</th><th>交互内容与原因</th></tr>
+    <tr><td>买家客户端</td><td>查询模块、预约交易模块</td><td>查询公开商品、查看详情、发起/取消预约；买家不能调用审核和后台接口</td></tr>
+    <tr><td>卖家客户端</td><td>商品管理模块、预约交易模块、统计模块</td><td>编辑商品、提交审核、查看自己商品的预约、确认/拒绝/完成；只能操作自己的资源</td></tr>
+    <tr><td>管理员客户端</td><td>审核与违规模块、用户与权限模块、日志模块、统计模块</td><td>审核商品、违规移除、禁用用户、查询日志和平台统计</td></tr>
+    <tr><td>商品管理模块</td><td>审核与违规模块</td><td>卖家提交审核后，商品进入审核队列；审核结果回写商品状态</td></tr>
+    <tr><td>预约与交易模块</td><td>商品管理模块、日志模块</td><td>确认预约时锁定商品行，更新商品为已预订；取消/过期/完成时释放或售出商品；所有状态变化写日志</td></tr>
+    <tr><td>审核与违规模块</td><td>预约与交易模块、日志模块</td><td>违规移除商品时取消 PENDING/CONFIRMED 预约，避免商品已移除但预约仍有效</td></tr>
+    <tr><td>统计模块</td><td>商品仓储、预约仓储</td><td>只做聚合查询，不修改业务数据</td></tr>
+  </table>
+
+  <h3>2.4 关键设计决策</h3>
+  <ul>
+    <li><strong>角色与资源双重校验：</strong>不仅判断角色，还判断商品/预约是否属于当前用户，防止卖家操作他人商品、买家取消他人预约。</li>
+    <li><strong>状态机：</strong>商品和预约分别定义完整状态和允许转换；未列出的转换一律禁止，避免“删除商品”“随意改状态”造成不一致。</li>
+    <li><strong>事务 + 行锁 + 唯一索引：</strong>确认预约时在同一个事务中锁定商品行，更新商品、目标预约和其他待确认预约；数据库唯一索引作为最后防线。</li>
+    <li><strong>版本号：</strong>商品和预约都带 version；旧页面操作返回 409，不覆盖较新的状态。</li>
+    <li><strong>幂等请求编号：</strong>预约创建等关键写操作使用客户端请求编号；同一编号重放返回首次结果，避免网络重试产生重复预约。</li>
+    <li><strong>线下交易边界：</strong>系统只记录状态，不接入在线支付、担保、退款和物流。</li>
+  </ul>
+
+  <p>并发确认的详细交互见 3.6 节图 8。设计上要求：买家 A、买家 B 同时对待确认预约发起请求时，卖家确认 A 必须在事务中锁定商品行并更新商品、A 的预约和其他待确认预约；若旧页面提交的 version 不一致，则返回 409，不执行部分写入。</p>
+</div>
+
+<!-- 3 -->
+<div class="section">
+  <h2>3 UML 建模</h2>
+  <p>本实验共绘制 9 张 UML 图，覆盖结构性图、行为性图和交互性图三类。类图为必画图；组件图强调模块结构；用例图说明角色权限；商品和预约状态图说明状态机；活动图说明主流程；时序图说明一次具体交互。正文展示 8 张图，完整类图总览作为补充文件保存在 <code>UML/UML类图.png</code> 中。所有图均使用 PlantUML 绘制，源文件和 PNG 保存在 <code>lab2/UML/</code>。</p>
+
+  <h3>3.1 类图</h3>
+  <p>类图分为领域模型、服务与仓储两张。这样做是因为一张包含全部层次的大类图会变得过宽，打印后可读性差；拆成两张后，一张回答“系统中有什么业务对象”，另一张回答“业务逻辑和数据访问如何组织”。完整的类图总览仍保存在 <code>UML/UML类图.png</code> 中，作为仓库中的补充参考。</p>
+  <div class="figure mid">
+    <img src="UML/UML类图-领域模型.png" alt="领域模型类图">
+    <div class="caption">图 2 领域模型类图：用户、商品、预约、审核记录、日志和状态枚举</div>
+  </div>
+  <p>领域模型中的关键关系是：卖家发布商品，分类区分商品；买家发起预约；商品可以有多个预约，但同一商品最多一条已确认预约；审核/违规记录关联商品和管理员；操作日志记录操作者、目标和前后状态。<code>Product.version</code> 和 <code>Reservation.version</code> 用于旧页面并发控制，<code>clientRequestId</code> 用于幂等。</p>
+  <div class="figure wide">
+    <img src="UML/UML类图-服务与仓储.png" alt="服务与仓储类图">
+    <div class="caption">图 3 服务与仓储类图：控制器、应用服务、仓储接口的依赖关系</div>
+  </div>
+  <p>服务与仓储类图体现分层：Controller 只做参数和权限入口，Service 承担业务规则和事务边界，Repository 负责持久化。预约服务同时依赖预约仓储和商品仓储，因为确认预约必须同时修改预约与商品；审核服务和日志服务分开，避免把审计写死在业务对象里。</p>
+
+  <h3>3.2 用例图</h3>
+  <div class="figure wide">
+    <img src="UML/UML用例图.png" alt="用例图">
+    <div class="caption">图 4 用例图：游客、买家、卖家、管理员的角色权限边界</div>
+  </div>
+  <p>用例图用于确认权限边界：游客只能浏览、搜索和登录；买家可以预约、取消和查看自己的预约；卖家可以发布/编辑商品、提交审核、处理预约、完成交易；管理员负责审核、违规、用户、日志和平台统计。管理员不参与预约和交易，买家/卖家也不能进入后台审核用例。</p>
+
+  <h3>3.3 商品状态图</h3>
+  <div class="figure mid">
+    <img src="UML/UML状态图-商品.png" alt="商品状态图">
+    <div class="caption">图 5 商品状态图：草稿→待审核→在售→已预订→已售出</div>
+  </div>
+  <p>商品状态机明确禁止几条容易出错的操作：草稿不能直接上架；待审核不能直接变为已预订；已预订不能直接下架；已售出不能重新售卖；违规移除是终态。卖家修改已发布商品的关键字段后，商品回到待审核，审核期间暂停公开和预约。</p>
+
+  <h3>3.4 预约状态图</h3>
+  <div class="figure mid">
+    <img src="UML/UML状态图-预约.png" alt="预约状态图">
+    <div class="caption">图 6 预约状态图：待确认→已确认→完成/取消/拒绝/过期</div>
+  </div>
+  <p>预约状态机区分“待确认”和“已确认”。同一商品可以有多条 PENDING，但最多只有一条 CONFIRMED；同一买家同一商品最多一条 PENDING 或 CONFIRMED。待确认 24 小时未处理自动过期；已确认 7 天未完成自动过期并释放商品。完成、取消、拒绝、过期都是终态。</p>
+
+  <h3>3.5 活动图</h3>
+  <div class="figure mid">
+    <img src="UML/UML活动图-交易主流程.png" alt="交易主流程活动图">
+    <div class="caption">图 7 交易主流程活动图：搜索、预约、确认、线下完成</div>
+  </div>
+  <p>活动图把跨角色的主流程串起来：买家查询商品、提交预约；系统检查商品状态和重复预约；卖家处理多条待确认预约；确认后商品变为已预订；线下交付完成后卖家标记完成。异常分支包括重复/状态冲突、卖家拒绝、24 小时超时和 7 天未完成。</p>
+
+  <h3>3.6 时序图</h3>
+  <div class="figure tall">
+    <img src="UML/UML时序图-卖家确认预约.png" alt="卖家确认预约时序图">
+    <div class="caption">图 8 卖家确认预约时序图：并发确认与事务边界</div>
+  </div>
+  <p>时序图是本设计中最能体现“可落地性”的图。它把 Controller、Service、ProductRepository、ReservationRepository、数据库和日志服务放在同一条时间线上，展示了确认预约的 BEGIN IMMEDIATE、商品行锁、状态更新、其他预约拒绝、日志写入和 COMMIT。旧页面版本冲突时直接 ROLLBACK 并返回 409，避免部分更新。</p>
+</div>
+
+<!-- 4 -->
+<div class="section">
+  <h2>4 数据与状态设计</h2>
+  <h3>4.1 主要数据关系</h3>
+  <table>
+    <tr><th style="width:24%">实体</th><th>关键字段</th><th>关系与约束</th></tr>
+    <tr><td>User 用户</td><td>user_id、account、password_hash、role、status、display_name、contact</td><td>account 唯一；role 为 BUYER/SELLER/ADMIN；status 为 ACTIVE/DISABLED</td></tr>
+    <tr><td>Category 分类</td><td>category_id、name、status</td><td>分类名称唯一；商品必须属于一个分类</td></tr>
+    <tr><td>Product 商品</td><td>product_id、seller_id、category_id、title、price_cents、condition、status、version</td><td>属于一个卖家和一个分类；version 用于并发控制</td></tr>
+    <tr><td>Reservation 预约</td><td>reservation_id、product_id、buyer_id、seller_id、status、price_cents、client_request_id、version、expires_at</td><td>关联买家、卖家、商品；请求编号在买家范围内唯一；保存成交价格快照</td></tr>
+    <tr><td>ModerationRecord 审核记录</td><td>record_id、product_id、admin_id、action、reason</td><td>记录审核通过、驳回、违规移除，保留处理理由</td></tr>
+    <tr><td>OperationLog 操作日志</td><td>log_id、actor_id、action_type、target_type、target_id、before_state、after_state、request_id、ip</td><td>关键操作留痕，业务接口不可修改或删除</td></tr>
+  </table>
+
+  <h3>4.2 唯一性与同步规则</h3>
+  <ul>
+    <li>用户账号唯一，商品分类名称唯一。</li>
+    <li>同一商品最多一条 <code>CONFIRMED</code> 预约；数据库使用部分唯一索引约束。</li>
+    <li>同一买家对同一商品最多一条 <code>PENDING</code> 或 <code>CONFIRMED</code> 预约；避免重复点击和重复预约。</li>
+    <li><code>client_request_id</code> 用于幂等重放；同一请求编号重放返回第一次结果，不重复插入。</li>
+    <li>商品确认预约时，商品状态、目标预约和其他待确认预约在同一个事务中更新。</li>
+    <li>取消/过期已确认预约时，商品从 <code>RESERVED</code> 恢复为 <code>ON_SALE</code>；完成交易时商品变为 <code>SOLD</code>、预约变为 <code>COMPLETED</code>。</li>
+    <li>商品和预约的关键状态变化递增 version；旧版本请求返回 409。</li>
+  </ul>
+
+  <h3>4.3 关键状态转换</h3>
+  <table>
+    <tr><th style="width:24%">对象</th><th>允许的关键转换</th><th>禁止的典型转换</th></tr>
+    <tr><td>商品</td><td>草稿→待审核→在售/审核未通过；在售→已预订→已售出；在售→已下架；在售/待审核/已预订→违规移除</td><td>草稿→在售；待审核→已预订；已预订→已下架；已售出→在售；违规移除→在售</td></tr>
+    <tr><td>预约</td><td>待确认→已确认；待确认→拒绝/取消/过期；已确认→完成/取消/过期</td><td>待确认→完成；已确认→待确认；终态→有效状态；同一商品两条已确认</td></tr>
+  </table>
+  <div class="note blue">
+    设计取舍：没有采用“删除商品”的硬删除，而是使用 <code>VIOLATION_REMOVED</code> 状态保留历史；没有把预约和商品状态放在两个独立操作中，而是要求同一事务更新。这样虽然牺牲了一点实现简单性，但能保证日志、预约和管理员处理都可追溯。
+  </div>
+</div>
+
+<!-- 5 UI -->
+<div class="section">
+  <h2>5 UI 界面设计</h2>
+  <h3>5.1 设计定位</h3>
+  <p>UI 设计采用移动端高保真原型，参考闲鱼的信息架构和视觉语言：黄色主色、黑色文字、白色卡片、顶部搜索、双列商品瀑布流、商品详情底部预约操作栏、角色化底部导航。设计稿只参考布局和交互，不使用闲鱼的 Logo、商标、吉祥物或图片素材。</p>
+  <p>设计尺寸为 390×844，导出为 780×1688 的 2 倍 PNG。HTML/CSS 源文件在 <code>lab2/UI源文件/</code>，导出图片在 <code>lab2/UI界面/</code>。设计稿覆盖登录、商品查询、商品详情、预约、商品管理、审核、违规、用户、日志和统计等主要功能模块。</p>
+
+  <h3>5.2 页面与模块对应</h3>
+  <table>
+    <tr><th>页面</th><th>角色</th><th>模块</th><th>核心交互</th></tr>
+    <tr><td>01 登录注册</td><td>游客</td><td>用户与认证</td><td>登录/注册切换、买家/卖家角色、管理员不开放注册</td></tr>
+    <tr><td>02 买家首页</td><td>买家</td><td>商品查询</td><td>搜索、分类、商品瀑布流、底部导航</td></tr>
+    <tr><td>03 商品详情</td><td>买家</td><td>商品详情/预约</td><td>查看价格、卖家、描述，发起预约</td></tr>
+    <tr><td>04 我的预约</td><td>买家</td><td>预约与交易</td><td>状态筛选、截止时间、取消预约</td></tr>
+    <tr><td>05 卖家商品管理</td><td>卖家</td><td>商品管理</td><td>状态统计、编辑、下架、处理预约</td></tr>
+    <tr><td>06 商品发布编辑</td><td>卖家</td><td>商品管理</td><td>图片、标题、描述、价格、成色、提交审核</td></tr>
+    <tr><td>07 卖家预约处理</td><td>卖家</td><td>预约与交易</td><td>多条待确认预约、拒绝、确认预约</td></tr>
+    <tr><td>08 管理员审核</td><td>管理员</td><td>审核与违规</td><td>待审核队列、通过/驳回</td></tr>
+    <tr><td>09 管理员违规处理</td><td>管理员</td><td>审核与违规</td><td>违规理由、取消关联预约提示</td></tr>
+    <tr><td>10 管理员用户管理</td><td>管理员</td><td>用户管理</td><td>角色/状态筛选、禁用/启用</td></tr>
+    <tr><td>11 操作日志</td><td>管理员</td><td>日志</td><td>按操作者、动作、目标、时间筛选</td></tr>
+    <tr><td>12 统计看板</td><td>管理员/卖家</td><td>统计</td><td>商品状态、成交率、每日完成交易</td></tr>
+  </table>
+</div>
+
+<!-- UI pages: 2 per page -->
+<div class="ui-page">
+  <div class="ui-item"><h4>01 登录 / 注册</h4><img src="UI界面/01_登录注册.png" alt="登录注册"><p>展示品牌信息、登录/注册切换、账号密码输入和管理员账号说明。注册时可选择买家或卖家角色。</p><p class="meta">模块：用户与认证</p></div>
+  <div class="ui-item"><h4>02 买家首页</h4><img src="UI界面/02_买家首页.png" alt="买家首页"><p>顶部黄色搜索区和分类标签，双列商品瀑布流展示价格、标题、卖家和状态。底部导航只暴露买家可用入口。</p><p class="meta">模块：商品查询</p></div>
+</div>
+<div class="ui-page">
+  <div class="ui-item"><h4>03 商品详情</h4><img src="UI界面/03_商品详情.png" alt="商品详情"><p>展示商品图片、价格、标题、状态、成色、描述和卖家信息。底部突出“发起预约”，并提示预约不代表付款。</p><p class="meta">模块：商品详情 / 预约</p></div>
+  <div class="ui-item"><h4>04 我的预约</h4><img src="UI界面/04_我的预约.png" alt="我的预约"><p>按待确认、已确认、已完成筛选预约；显示截止时间、卖家和商品，待确认和已确认预约可以取消。</p><p class="meta">模块：预约与交易</p></div>
+</div>
+<div class="ui-page">
+  <div class="ui-item"><h4>05 卖家商品管理</h4><img src="UI界面/05_卖家商品管理.png" alt="卖家商品管理"><p>顶部统计在售、待审核和待处理预约；商品列表按状态展示，提供编辑、下架、处理预约等操作。</p><p class="meta">模块：商品管理</p></div>
+  <div class="ui-item"><h4>06 商品发布 / 编辑</h4><img src="UI界面/06_商品发布编辑.png" alt="商品发布编辑"><p>表单包含图片、标题、描述、分类、价格、成色；底部提供保存草稿和提交审核，提交后进入管理员审核。</p><p class="meta">模块：商品管理</p></div>
+</div>
+<div class="ui-page">
+  <div class="ui-item"><h4>07 卖家预约处理</h4><img src="UI界面/07_卖家预约处理.png" alt="卖家预约处理"><p>同一商品的多条待确认预约并列展示，包含买家留言、截止时间和价格；卖家可拒绝或确认其中一条。</p><p class="meta">模块：预约与交易</p></div>
+  <div class="ui-item"><h4>08 管理员审核</h4><img src="UI界面/08_管理员审核.png" alt="管理员审核"><p>待审核队列展示商品、卖家、分类、价格和描述；管理员可填写理由驳回或审核通过。</p><p class="meta">模块：审核与违规</p></div>
+</div>
+<div class="ui-page">
+  <div class="ui-item"><h4>09 管理员违规处理</h4><img src="UI界面/09_管理员违规处理.png" alt="管理员违规处理"><p>通过商品搜索定位违规商品，底部弹层填写处理理由，并提示将取消相关预约。</p><p class="meta">模块：审核与违规</p></div>
+  <div class="ui-item"><h4>10 管理员用户管理</h4><img src="UI界面/10_管理员用户管理.png" alt="管理员用户管理"><p>按角色和状态筛选用户，展示账号、昵称、商品数和状态，提供禁用/启用操作。</p><p class="meta">模块：用户管理</p></div>
+</div>
+<div class="ui-page">
+  <div class="ui-item"><h4>11 操作日志</h4><img src="UI界面/11_操作日志.png" alt="操作日志"><p>按操作者、操作类型、目标和时间筛选，展示前后状态、请求编号和操作时间。</p><p class="meta">模块：日志</p></div>
+  <div class="ui-item"><h4>12 统计看板</h4><img src="UI界面/12_统计看板.png" alt="统计看板"><p>展示平台商品、完成交易、成交率和待处理预约；用条形图展示商品状态和每日完成交易。</p><p class="meta">模块：统计</p></div>
+</div>
+
+<!-- 6 AI -->
+<div class="section">
+  <h2>6 AI 辅助设计过程</h2>
+  <h3>6.1 使用原则</h3>
+  <p>本实验使用 AI 工具辅助生成初稿、检查语法和整理报告结构，但不把 AI 输出直接当作最终设计。AI 工具为 Pi Coding Agent，模型为当前运行环境提供的 <code>deepseek-v4-flash</code>。每次使用后都由本人检查：是否符合实验一需求、是否漏掉权限/状态/异常、是否能被 PlantUML 或浏览器正确渲染。</p>
+
+  <div class="ai-use">
+    <h3>使用 1：模块划分与组件图初稿</h3>
+    <p><span class="label">使用场景：</span>根据实验一的 7 个业务模块，生成模块职责和组件依赖的初稿。</p>
+    <p><span class="label">生成结果：</span>AI 给出了“客户端—服务端—数据库”的三层划分，但把在线支付、物流和聊天也列进了模块，且模块之间边界较粗。</p>
+    <p><span class="label">优点：</span>很快覆盖了主要模块，组件图的格式和连线可以直接作为起点。</p>
+    <p><span class="label">局限：</span>没有严格遵守实验一的范围约束，把“管理员审核”和“违规处理”混成一个模块，也没有体现预约交易模块对商品模块的锁定调用。</p>
+    <p><span class="label">人工修改：</span>删除支付、物流、聊天等范围外模块；拆出审核与违规、日志、统计；增加“预约交易模块→商品模块：锁定商品”和“违规→取消预约”的交互。</p>
+  </div>
+
+  <div class="ai-use">
+    <h3>使用 2：类图初稿</h3>
+    <p><span class="label">使用场景：</span>根据领域对象和服务划分生成 PlantUML 类图。</p>
+    <p><span class="label">生成结果：</span>AI 生成了 User、Product、Reservation、Service、Repository 等类，但把 Payment、Order、Chat 也画进了类图，并缺少 version、clientRequestId、审核记录等关键字段。</p>
+    <p><span class="label">优点：</span>类之间的关系基本正确，节省了从零画类图的时间。</p>
+    <p><span class="label">局限：</span>模型偏通用电商，没有反映“线下交易、多条待确认、一条已确认、旧页面冲突”的项目特点。</p>
+    <p><span class="label">人工修改：</span>删除 Payment/Order/Chat；增加 <code>version</code>、<code>clientRequestId</code>、<code>priceSnapshot</code>、<code>ModerationRecord</code>、<code>OperationLog</code>；把类图拆成领域模型和服务/仓储两张，避免一张图过宽。</p>
+  </div>
+
+  <div class="ai-use">
+    <h3>使用 3：状态图与时序图初稿</h3>
+    <p><span class="label">使用场景：</span>生成商品/预约状态图和“卖家确认预约”的时序图。</p>
+    <p><span class="label">生成结果：</span>AI 的初稿把“预约”写成商品立即锁定，没有体现多条 PENDING、卖家确认后其他预约自动拒绝，也没有旧页面版本冲突。</p>
+    <p><span class="label">优点：</span>状态图和时序图的基本语法正确，能快速得到可视化骨架。</p>
+    <p><span class="label">局限：</span>遗漏并发和异常分支；如果直接采用，会产生“第一个预约锁死商品”的错误设计。</p>
+    <p><span class="label">人工修改：</span>增加 PENDING/CONFIRMED 双状态、24 小时/7 天过期、事务锁、唯一索引、旧页面 409；在时序图中加入 BEGIN IMMEDIATE、ROLLBACK 和其他预约自动拒绝。</p>
+  </div>
+
+  <div class="ai-use">
+    <h3>使用 4：UI 布局与页面初稿</h3>
+    <p><span class="label">使用场景：</span>参考闲鱼的移动端风格，为 12 个页面生成布局和文案初稿。</p>
+    <p><span class="label">生成结果：</span>AI 最初生成的是偏桌面后台的卡片布局，信息密度高、角色入口混杂；颜色和按钮也不统一。</p>
+    <p><span class="label">优点：</span>能快速给出搜索、瀑布流、商品详情、审核列表等页面的结构建议。</p>
+    <p><span class="label">局限：</span>没有体现移动端底部导航、角色隔离和商品状态反馈；如果直接使用，页面会像管理后台而不是二手交易产品。</p>
+    <p><span class="label">人工修改：</span>改成 390×844 移动端；统一黄色/黑色/白色设计系统；按买家、卖家、管理员分别设计底部导航；补充状态标签、取消/确认弹层、预约截止时间、违规理由等业务信息。</p>
+  </div>
+
+  <div class="ai-use">
+    <h3>使用 5：报告结构与 AI 章节初稿</h3>
+    <p><span class="label">使用场景：</span>根据实验二要求整理报告目录和 AI 使用章节的写法。</p>
+    <p><span class="label">生成结果：</span>AI 给出了“项目概况—架构—UML—UI—AI—总结”的目录，但 AI 章节初稿只写了“AI 很高效”，没有具体修改过程和局限。</p>
+    <p><span class="label">优点：</span>目录覆盖了任务书要求，节省了结构整理时间。</p>
+    <p><span class="label">局限：</span>容易写成空泛的优缺点，没有体现“人如何判断和修改”的证据。</p>
+    <p><span class="label">人工修改：</span>按“场景—生成结果—优点—局限—人工修改”组织每次使用；补充“AI 可能扩大范围”“AI 会遗漏并发和边界”的具体例子；增加“人只做校对是否可行”的分析。</p>
+  </div>
+
+  <h3>6.2 人工审查与自动化检查</h3>
+  <ul>
+    <li>PlantUML 源文件逐个渲染，检查是否有语法错误、图中文字是否溢出、图是否过宽。</li>
+    <li>类图拆成领域模型和服务/仓储两张，保证报告打印后仍能阅读。</li>
+    <li>对照实验一逐项检查：三类角色、商品/预约状态、权限、数据唯一性、异常、日志和统计是否有对应设计。</li>
+    <li>UI 逐个模块检查：角色是否只看到自己的入口、状态是否正确、危险操作是否有确认提示。</li>
+    <li>用实际原型做 API 测试和浏览器页面检查，验证设计中的状态机和并发规则可以实现。</li>
+  </ul>
+
+  <h3>6.3 能否让人只做检查校对</h3>
+  <p>部分可以，但不能完全做到。AI 很适合做“生成初稿”和“重复性检查”：生成 PlantUML 骨架、检查语法、导出截图、检查文件名和目录、根据模板生成报告结构。这些工作可以形成一条工作流：</p>
+  <ol>
+    <li>把实验一需求和约束作为唯一输入，明确哪些内容绝对不能出现。</li>
+    <li>让 AI 生成多个候选稿，而不是只生成一个答案。</li>
+    <li>用自动化检查 PlantUML 渲染、UI 截图、文件完整性、状态转换表和应用接口测试。</li>
+    <li>由人检查业务语义、权限边界、异常处理、设计取舍和可读性。</li>
+  </ol>
+  <p>但是“人只做检查校对”仍然有风险。架构选择、状态语义、权限边界、UI 信息层级和验收标准都需要人的判断；AI 可能把在线支付、单条预约、错误状态转换写得很自然。人如果只看排版，很容易把错误设计“校对通过”。更合理的定位是：AI 负责生成和检查，人负责决策和验收；人的工作从“从零生产”变成“提出约束、比较方案、验证结果”。</p>
+  <p>对于本课程项目，最有效的方式是让 AI 生成结构化的初稿，人保留需求追踪表和自己的设计理由。这样即使 AI 生成的某张图被替换，设计决策仍然可以解释。</p>
+</div>
+
+<!-- 7 -->
+<div class="section">
+  <h2>7 实验总结</h2>
+  <h3>7.1 遇到的困难</h3>
+  <p>第一，实验一的需求较多，状态和异常相互牵连。把 29 条需求压缩成模块时，很容易把“商品审核”“违规移除”“预约取消”混在一起。解决方法是先建立模块—需求映射表，再为商品和预约分别画状态图，最后用时序图验证并发确认。</p>
+  <p>第二，类图容易画成“通用电商”。AI 初稿加入了支付、订单和聊天，但这些都在实验一范围之外；它还漏掉了版本号和请求编号。解决方法是以实验一的范围和异常规则为准，删除范围外类，补上 <code>version</code>、<code>clientRequestId</code>、<code>priceSnapshot</code> 和日志类。</p>
+  <p>第三，UML 图的可读性问题。完整类图导出后非常宽，直接放进 A4 报告会看不清。解决方法是将类图拆成领域模型和服务/仓储两张，完整总览保留为附录；宽图在报告中尽量使用整页宽度，并配合文字说明。</p>
+  <p>第四，UI 设计和实际运行系统之间的差异。运行系统是功能原型，实验二需要的是设计稿；直接截桌面页面会失去移动端交易产品的信息层级。解决方法是单独制作 390×844 的移动端高保真设计稿，参考闲鱼的搜索、瀑布流和底部导航，但不复制其品牌素材。</p>
+
+  <h3>7.2 设计收获</h3>
+  <ul>
+    <li>UML 不是“画得好看”，而是把权限、状态、数据关系和异常说清楚；一张时序图能暴露状态机没有写出来的并发问题。</li>
+    <li>类图应该服务于阅读：与其画一张巨大的图，不如拆成领域模型和服务/仓储两张，再用组件图说明模块边界。</li>
+    <li>UI 设计必须和角色、状态、异常对应：不同角色看到不同入口，危险操作要有确认和反馈。</li>
+    <li>AI 适合做初稿和检查，但设计决策必须由人负责；AI 的输出越流畅，越需要核对来源和范围。</li>
+  </ul>
+
+  <h3>7.3 后续工作</h3>
+  <p>后续实现阶段可以在本设计基础上继续补充：商品图片上传、消息通知、评价、举报处理、管理端审核历史、统计导出等。支付、物流、聊天等范围外能力如果加入，需要重新做需求变更和状态设计，不能直接塞进现有模块。</p>
+</div>
+
+<!-- 8 -->
+<div class="section">
+  <h2>8 版本信息</h2>
+  <table class="version">
+    <tr><td>项目</td><td>校园 / 社区二手交易系统</td></tr>
+    <tr><td>公开仓库</td><td>https://github.com/xxxhz3927698/lab1</td></tr>
+    <tr><td>UML / UI 设计提交</td><td><code>f21d4fd</code>（PlantUML 架构与状态模型）<br><code>5f73fcf</code>（闲鱼风格高保真 UI 设计稿）</td></tr>
+    <tr><td>UML 目录</td><td><code>lab2/UML/</code>，包含 9 组 <code>.puml</code> 和 <code>.png</code></td></tr>
+    <tr><td>UI 目录</td><td><code>lab2/UI界面/</code>，包含 12 张 PNG；源文件在 <code>lab2/UI源文件/</code></td></tr>
+    <tr><td>提交包</td><td>实验报告.pdf、UML/、UI界面/</td></tr>
+  </table>
+  <div class="note blue" style="margin-top:8mm">
+    本报告是实验二设计文档；可运行原型代码在仓库 <code>app/</code> 目录中，用于验证状态机、权限和并发规则，不作为实验二提交的主体。
+  </div>
+  <div class="footer-note">校园 / 社区二手交易系统 · 软件设计与建模实验报告 · 2026-11-13</div>
+</div>
+
+</body>
+</html>
